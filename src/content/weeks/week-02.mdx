@@ -18,21 +18,36 @@ learningOutcomes:
 
 import Callout from "../../components/Callout.astro";
 
+## Workshop flow
+
+This workshop is designed as a sequence:
+
+1. Warm up with basic Python syntax.
+2. Connect number-system lecture ideas to Python conversions.
+3. Implement small helper functions and test them.
+4. Finish with an overflow challenge.
+
+<Callout tone="info" title="By the end of this workshop">
+
+You should be able to explain how Python code maps to binary representation concepts from lectures, not just run the code.
+
+</Callout>
+
 ## Getting started
 
-No installation is required for this workshop. Use one of these browser tools:
+No installation is required. Use one browser-based Python environment:
 
 - **Google Colab**: `colab.research.google.com`
 - **Replit**: `replit.com`
 - **W3Schools editor**: `w3schools.com/python`
 
-Start with the classic first program:
+Start with a quick sanity check:
 
 ```python
 print("Hello, World!")
 ```
 
-Try a few quick edits:
+Then make a few quick edits:
 
 - Change the message to your own name.
 - Print a number: `print(42)`.
@@ -108,7 +123,7 @@ print(int("ff", 16))  # 255
 
 ## Build your own decimal-to-binary converter
 
-Instead of calling `bin()`, implement the repeated-division algorithm from lectures.
+Instead of calling `bin()` directly, implement the repeated-division algorithm from lectures.
 
 ```python
 def to_binary(number):
@@ -148,7 +163,7 @@ Expected output:
 
 ## ASCII and Unicode
 
-Text is represented as numbers. Python exposes this directly with `ord()` and `chr()`.
+Text is represented as numbers. Python exposes this directly using `ord()` and `chr()`.
 
 ```python
 print(ord("A"))
@@ -224,7 +239,7 @@ print("Discard carry for 4-bit result -> 0000")
 
 ## Challenge: overflow detector
 
-Build a tool that reports whether integer addition fits inside an N-bit two's complement range.
+Build a tool that reports whether integer addition fits inside an `N`-bit two's complement range.
 
 ```python
 def check_overflow(a, b, bits):
@@ -255,8 +270,11 @@ check_overflow(-3, -6, 4)
 
 </Callout>
 
-## Keep practicing
+## Next steps
 
-- `w3schools.com/python`
-- `colab.research.google.com`
-- `pythontutor.com`
+1. Re-run each code block and add one extra test case of your own.
+2. Revisit lecture slides and annotate where each algorithm appears in this workshop.
+3. Practice with:
+   - `w3schools.com/python`
+   - `colab.research.google.com`
+   - `pythontutor.com`

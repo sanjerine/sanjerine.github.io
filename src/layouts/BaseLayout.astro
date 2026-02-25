@@ -10,8 +10,25 @@ const { title, description = "Weekly Python workshops for CITX0001." } = Astro.p
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/weeks/", label: "All Weeks" },
+  { href: "/weeks/week-02/", label: "Start Week 02" },
+  { href: "/weeks/", label: "Workshop Archive" },
 ];
+
+function isNavActive(href: string): boolean {
+  if (href === "/") {
+    return Astro.url.pathname === "/";
+  }
+
+  if (href === "/weeks/week-02/") {
+    return Astro.url.pathname === "/weeks/week-02/";
+  }
+
+  if (href === "/weeks/") {
+    return Astro.url.pathname.startsWith("/weeks/") && Astro.url.pathname !== "/weeks/week-02/";
+  }
+
+  return Astro.url.pathname.startsWith(href);
+}
 ---
 
 <!doctype html>
@@ -22,20 +39,31 @@ const navItems = [
     <title>{title}</title>
     <meta name="description" content={description} />
   </head>
-  <body class="text-slate-100 antialiased">
-    <div class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-12 pt-8 sm:px-6 lg:px-8">
-      <header class="rounded-3xl border border-slate-700/80 bg-slate-900/70 px-5 py-4 shadow-[0_12px_40px_-18px_rgba(15,23,42,0.75)] backdrop-blur">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <a href="/" class="text-xl font-semibold tracking-tight text-white">CITX0001 Workshop Hub</a>
-          <nav class="flex flex-wrap items-center gap-2 text-sm">
+  <body class="antialiased">
+    <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div class="page-glow absolute -left-28 -top-24 h-80 w-80 rounded-full bg-[#9dd5ec]/45 blur-3xl"></div>
+      <div class="page-glow absolute right-[-5rem] top-44 h-[28rem] w-[28rem] rounded-full bg-[#f1bf9f]/35 blur-3xl"></div>
+      <div class="paper-grid absolute inset-0 opacity-55"></div>
+    </div>
+
+    <div class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-12 pt-7 sm:px-6 lg:px-8">
+      <header class="surface-card-strong relative overflow-hidden rounded-[1.75rem] px-5 py-4 sm:px-6">
+        <div class="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[var(--accent-soft)]/85 blur-2xl"></div>
+        <div class="relative flex flex-wrap items-center justify-between gap-4">
+          <a href="/" class="leading-tight no-underline">
+            <p class="kicker">CITX0001</p>
+            <p class="mt-1 text-[1.35rem] font-semibold text-[var(--ink)]">Python Workshop Hub</p>
+          </a>
+
+          <nav class="flex flex-wrap items-center gap-2">
             {navItems.map((item) => (
               <a
                 href={item.href}
                 class:list={[
-                  "rounded-full border px-3 py-1.5 transition",
-                  (item.href === "/" ? Astro.url.pathname === "/" : Astro.url.pathname.startsWith(item.href))
-                    ? "border-blue-300/80 bg-blue-500/20 text-blue-100"
-                    : "border-slate-600/80 text-slate-200 hover:border-slate-400 hover:text-white",
+                  "rounded-full border px-3 py-1.5 text-sm transition",
+                  isNavActive(item.href)
+                    ? "border-[#6ea8c2] bg-[#d8edf8] text-[#0d5f81]"
+                    : "border-[#cdbb9f] bg-white/65 text-[#566476] hover:border-[#78a9c1] hover:text-[#1a2a3d]",
                 ]}
               >
                 {item.label}
@@ -45,15 +73,10 @@ const navItems = [
         </div>
       </header>
 
-      <main class="mt-8 flex-1">
+      <main class="motion-rise mt-8 flex-1">
         <slot />
       </main>
 
-      <footer class="mt-8 rounded-2xl border border-slate-700/80 bg-slate-900/50 px-4 py-3 text-xs text-slate-300">
-        <p>
-          Built with Astro + Tailwind for GitHub Pages. Add weekly MDX files in <code>src/content/weeks</code>.
-        </p>
-      </footer>
     </div>
   </body>
 </html>

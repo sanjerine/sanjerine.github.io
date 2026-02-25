@@ -3,15 +3,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Page not found | CITX0001 Workshop Hub" description="The requested page could not be found.">
-  <section class="rounded-3xl border border-slate-700/80 bg-slate-900/70 p-8 text-center shadow-[0_18px_60px_-28px_rgba(15,23,42,0.8)]">
-    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">404</p>
-    <h1 class="mt-2 text-3xl font-bold text-white">Page not found</h1>
-    <p class="mt-3 text-slate-200">That route does not exist yet. Head back to the weekly workshop list.</p>
-    <a
-      href="/weeks/"
-      class="mt-5 inline-flex rounded-full border border-blue-300/70 bg-blue-500/20 px-4 py-2 text-sm font-medium text-blue-100 transition hover:border-blue-200 hover:bg-blue-500/30"
-    >
-      View all weeks
-    </a>
+  <section class="surface-card-strong rounded-3xl p-8 text-center">
+    <p class="kicker">404</p>
+    <h1 class="mt-2 text-3xl font-bold">Page not found</h1>
+    <p class="mt-3 text-[var(--ink-soft)]">That route does not exist yet. Head back to the workshop archive.</p>
+    <a href="/weeks/" class="btn-primary mt-5">View all weeks</a>
   </section>
 </BaseLayout>

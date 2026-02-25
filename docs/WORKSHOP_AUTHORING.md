@@ -54,8 +54,9 @@ learningOutcomes:
 
 ## Week publishing workflow
 
-- `published: false` keeps week visible on index as "Coming soon".
-- `published: true` turns the card into an active student link.
+- Student-facing pages begin at `week >= 2`.
+- `published: false` keeps the file in the repo, but hides it from student listings and routes.
+- `published: true` makes the week visible in `/` and `/weeks/` and creates the student route.
 
 ## Deploying
 

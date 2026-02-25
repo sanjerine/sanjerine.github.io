@@ -49,6 +49,8 @@ Optional fields:
 
 - Draft content with `published: false`.
 - Switch to `published: true` only when reviewed.
+- Student-facing workshop pages begin at week 2. Keep week 1 content as internal draft/reference.
+- Unpublished weeks should not be visible on the student site.
 - Verify locally with:
 
 ```bash

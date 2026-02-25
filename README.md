@@ -56,4 +56,5 @@ No `base` value is required unless this is moved to a non-user-site repository.
 
 ## Notes
 
+- Student-facing routes only include published weeks from Week 02 onward.
 - Legacy file `week2.html` is kept in the repo for reference while content is migrated into MDX.

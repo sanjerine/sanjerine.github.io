@@ -7,21 +7,21 @@ interface Props {
 const { title, tone = "info" } = Astro.props;
 
 const toneClasses = {
-  info: "border-blue-300/50 bg-blue-500/10",
-  exercise: "border-amber-300/50 bg-amber-400/10",
-  challenge: "border-pink-300/50 bg-pink-400/10",
+  info: "border-[#9cc2d6] bg-[#e8f4fa]",
+  exercise: "border-[#e2bf95] bg-[#fdf1e5]",
+  challenge: "border-[#ddae9c] bg-[#fde9e2]",
 } as const;
 
 const labelClasses = {
-  info: "text-blue-100",
-  exercise: "text-amber-100",
-  challenge: "text-pink-100",
+  info: "text-[#0b5f82]",
+  exercise: "text-[#8e4f1f]",
+  challenge: "text-[#92472b]",
 } as const;
 ---
 
-<section class:list={["my-6 rounded-2xl border px-4 py-4", toneClasses[tone]]}>
+<section class:list={["my-6 rounded-2xl border px-4 py-4 shadow-[0_10px_24px_-24px_rgba(18,28,39,0.7)] sm:px-5", toneClasses[tone]]}>
   <h3 class:list={["!mt-0 !mb-2 text-lg font-semibold", labelClasses[tone]]}>{title}</h3>
-  <div class="text-sm text-slate-100 [&_code]:rounded [&_code]:bg-slate-900/80 [&_code]:px-1.5 [&_code]:py-0.5 [&_li]:my-1.5">
+  <div class="text-sm text-[#2f3d4f] [&_code]:rounded [&_code]:bg-[#f7f9ff] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[#134766] [&_li]:my-1.5">
     <slot />
   </div>
 </section>
