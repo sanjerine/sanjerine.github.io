@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import WeekCard from "../components/WeekCard.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { sortWeeks } from "../lib/weeks";
+
+const weeks = (await getCollection("weeks")).sort(sortWeeks);
+const publishedCount = weeks.filter((week) => week.data.published).length;
+---
+
+<BaseLayout
+  title="CITX0001 Python Workshop Hub"
+  description="Weekly Python workshop material connected to CITX0001 lecture concepts."
+>
+  <section class="rounded-3xl border border-slate-700/80 bg-slate-900/70 p-6 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.8)] sm:p-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">Foundation Computing</p>
+    <h1 class="mt-2 text-4xl font-bold text-white sm:text-5xl">Python workshops that track each teaching week</h1>
+    <p class="mt-4 max-w-3xl text-base leading-7 text-slate-200 sm:text-lg">
+      This site gives students one predictable place to find guided Python exercises, examples, and challenges linked to the weekly unit content.
+    </p>
+
+    <div class="mt-6 flex flex-wrap items-center gap-2 text-sm text-slate-200">
+      <span class="rounded-full border border-blue-300/70 bg-blue-500/20 px-3 py-1">{publishedCount} live week(s)</span>
+      <span class="rounded-full border border-slate-600/80 bg-slate-800/70 px-3 py-1">{weeks.length} total week entries</span>
+      <span class="rounded-full border border-slate-600/80 bg-slate-800/70 px-3 py-1">Authoring format: MDX</span>
+    </div>
+  </section>
+
+  <section class="mt-8">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-2xl font-semibold text-white">Weekly content</h2>
+      <a
+        href="/weeks/"
+        class="rounded-full border border-slate-600/80 bg-slate-900/60 px-3 py-1.5 text-sm text-slate-200 transition hover:border-blue-300/70 hover:text-white"
+      >
+        Detailed list
+      </a>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {weeks.map((entry) => <WeekCard entry={entry} />)}
+    </div>
+  </section>
+
+  <section class="mt-8 rounded-3xl border border-slate-700/80 bg-slate-900/60 p-5 text-sm text-slate-200">
+    <h2 class="text-xl font-semibold text-white">Teaching workflow</h2>
+    <ol class="mt-3 space-y-2 list-decimal pl-5">
+      <li>Create a new week file in <code>src/content/weeks/</code>.</li>
+      <li>Set <code>published: true</code> when ready for students.</li>
+      <li>Push to <code>main</code>; GitHub Pages auto-deploys via Actions.</li>
+    </ol>
+    <p class="mt-3 text-xs text-slate-400">
+      For full authoring conventions and LLM guidance, see <code>docs/WORKSHOP_AUTHORING.md</code> and <code>AGENTS.md</code>.
+    </p>
+  </section>
+</BaseLayout>

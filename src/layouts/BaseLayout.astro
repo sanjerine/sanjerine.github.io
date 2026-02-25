@@ -1,0 +1,59 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Weekly Python workshops for CITX0001." } = Astro.props;
+
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/weeks/", label: "All Weeks" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="text-slate-100 antialiased">
+    <div class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-12 pt-8 sm:px-6 lg:px-8">
+      <header class="rounded-3xl border border-slate-700/80 bg-slate-900/70 px-5 py-4 shadow-[0_12px_40px_-18px_rgba(15,23,42,0.75)] backdrop-blur">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <a href="/" class="text-xl font-semibold tracking-tight text-white">CITX0001 Workshop Hub</a>
+          <nav class="flex flex-wrap items-center gap-2 text-sm">
+            {navItems.map((item) => (
+              <a
+                href={item.href}
+                class:list={[
+                  "rounded-full border px-3 py-1.5 transition",
+                  (item.href === "/" ? Astro.url.pathname === "/" : Astro.url.pathname.startsWith(item.href))
+                    ? "border-blue-300/80 bg-blue-500/20 text-blue-100"
+                    : "border-slate-600/80 text-slate-200 hover:border-slate-400 hover:text-white",
+                ]}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      <main class="mt-8 flex-1">
+        <slot />
+      </main>
+
+      <footer class="mt-8 rounded-2xl border border-slate-700/80 bg-slate-900/50 px-4 py-3 text-xs text-slate-300">
+        <p>
+          Built with Astro + Tailwind for GitHub Pages. Add weekly MDX files in <code>src/content/weeks</code>.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CITX0001 — Python & Data Representation Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232735;
+    --border: #2e3345;
+    --text: #e2e4ed;
+    --text-dim: #8b90a5;
+    --accent: #6c9cfc;
+    --accent-dim: #3d5a96;
+    --green: #7dd3a0;
+    --green-dim: #2a4a38;
+    --orange: #f0a76e;
+    --orange-dim: #5a3f28;
+    --pink: #e88db4;
+    --code-bg: #141620;
+    --code-line: #1e2130;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 24px 100px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 60px 0 50px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 50px;
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(108, 156, 252, 0.1);
+    border: 1px solid rgba(108, 156, 252, 0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+
+  .header h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 2.6em;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header p {
+    color: var(--text-dim);
+    font-size: 1.05em;
+    max-width: 550px;
+    margin: 0 auto;
+  }
+
+  /* Section headers */
+  .section {
+    margin-bottom: 50px;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .section h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.7em;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .section-intro {
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    font-size: 0.95em;
+  }
+
+  /* Concept boxes */
+  .concept-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+
+  .concept-box h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.05em;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .concept-box h3 .icon {
+    font-size: 1.2em;
+  }
+
+  .concept-box p, .concept-box li {
+    color: var(--text-dim);
+    font-size: 0.92em;
+    line-height: 1.8;
+  }
+
+  .concept-box ul {
+    padding-left: 20px;
+    margin-top: 8px;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .code-header .lang {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .code-content {
+    padding: 18px 20px;
+    overflow-x: auto;
+  }
+
+  .code-content pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  /* Syntax highlighting */
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cm { color: #546e7a; font-style: italic; }
+  .op { color: #89ddff; }
+  .bi { color: #ffcb6b; }
+  .var { color: #e2e4ed; }
+
+  /* Output block */
+  .output-block {
+    background: var(--green-dim);
+    border: 1px solid rgba(125, 211, 160, 0.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    line-height: 1.8;
+  }
+
+  .output-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+
+  /* Exercise boxes */
+  .exercise {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+
+  .exercise-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--orange);
+    background: var(--orange-dim);
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .exercise h4 {
+    font-size: 1em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .exercise p, .exercise ol li {
+    color: var(--text-dim);
+    font-size: 0.92em;
+  }
+
+  .exercise ol {
+    padding-left: 20px;
+    margin-top: 8px;
+  }
+
+  .exercise ol li {
+    margin-bottom: 8px;
+  }
+
+  /* Tip boxes */
+  .tip {
+    background: rgba(108, 156, 252, 0.06);
+    border: 1px solid rgba(108, 156, 252, 0.15);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-size: 0.9em;
+    color: var(--text-dim);
+  }
+
+  .tip strong {
+    color: var(--accent);
+  }
+
+  /* Challenge box */
+  .challenge {
+    background: linear-gradient(135deg, rgba(232, 141, 180, 0.08), rgba(108, 156, 252, 0.08));
+    border: 1px solid rgba(232, 141, 180, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 30px 0;
+  }
+
+  .challenge-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--pink);
+    background: rgba(232, 141, 180, 0.15);
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .challenge h4 {
+    font-size: 1.05em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .challenge p {
+    color: var(--text-dim);
+    font-size: 0.92em;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 50px 0;
+  }
+
+  /* Table of contents */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 50px;
+  }
+
+  .toc h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 6px 0;
+    color: var(--text);
+    font-size: 0.95em;
+  }
+
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 24px;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    background: var(--surface2);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  .inline-note {
+    font-size: 0.88em;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.8em; }
+    .section h2 { font-size: 1.4em; }
+    .container { padding: 20px 16px 60px; }
+    .concept-box, .exercise, .challenge { padding: 18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="header-tag">CITX0001 Foundation Computing</div>
+    <h1>Python & Data Representation</h1>
+    <p>A hands-on workshop connecting Python programming to the binary, hex, and encoding concepts from this week's lectures.</p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>What we'll cover</h3>
+    <div class="toc-item"><span class="toc-num">01</span> Getting Started with Python</div>
+    <div class="toc-item"><span class="toc-num">02</span> Variables & Types — How computers store your data</div>
+    <div class="toc-item"><span class="toc-num">03</span> Binary & Hex in Python</div>
+    <div class="toc-item"><span class="toc-num">04</span> Build Your Own Binary Converter</div>
+    <div class="toc-item"><span class="toc-num">05</span> ASCII & Unicode — Text as numbers</div>
+    <div class="toc-item"><span class="toc-num">06</span> Two's Complement in Python</div>
+    <div class="toc-item"><span class="toc-num">07</span> Challenge: Overflow Detector</div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-number">01</div>
+    <h2>Getting Started</h2>
+    <p class="section-intro">No installation needed. Open one of these in your browser and you can start writing Python immediately.</p>
+
+    <div class="concept-box">
+      <h3><span class="icon">🌐</span> Where to write Python</h3>
+      <ul>
+        <li><strong>Google Colab</strong> — colab.research.google.com — sign in with your Google account, click "New Notebook"</li>
+        <li><strong>Replit</strong> — replit.com — click "Create Repl", choose Python</li>
+        <li><strong>W3Schools</strong> — w3schools.com/python — use the "Try it Yourself" editor on any page</li>
+      </ul>
+    </div>
+
+    <p>Let's start with the most important program in computing history:</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>your first program</span></div>
+      <div class="code-content"><pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)</pre></div>
+    </div>
+
+    <div class="output-block">
+      <div class="output-label">Output</div>
+      Hello, World!
+    </div>
+
+    <p>Type this into your editor and run it. <code>print()</code> tells Python to display text on screen. The text inside the quotes is called a <strong>string</strong>.</p>
+
+    <div class="exercise">
+      <div class="exercise-tag">Try it</div>
+      <h4>Make it yours</h4>
+      <ol>
+        <li>Change the message to your name: <code>print("My name is ...")</code></li>
+        <li>Try printing a number: <code>print(42)</code> — notice you don't need quotes for numbers</li>
+        <li>Try printing a calculation: <code>print(3 + 5)</code> — what happens?</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-number">02</div>
+    <h2>Variables & Types</h2>
+    <p class="section-intro">In the lecture, we learned that all data is stored as bits. Python hides this complexity, but understanding what's happening underneath helps you become a better programmer.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>variables hold data</span></div>
+      <div class="code-content"><pre><span class="cm"># A variable is a name for a piece of data</span>
+<span class="var">age</span> <span class="op">=</span> <span class="num">19</span>
+<span class="var">name</span> <span class="op">=</span> <span class="str">"Alice"</span>
+<span class="var">temperature</span> <span class="op">=</span> <span class="num">36.5</span>
+<span class="var">is_student</span> <span class="op">=</span> <span class="kw">True</span>
+
+<span class="fn">print</span>(<span class="var">age</span>)          <span class="cm"># 19</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">age</span>))     <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">name</span>))    <span class="cm"># &lt;class 'str'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">temperature</span>)) <span class="cm"># &lt;class 'float'&gt;</span></pre></div>
+    </div>
+
+    <div class="concept-box">
+      <h3><span class="icon">💡</span> Connection to the lecture</h3>
+      <p>Remember from class: integers are stored in binary, text uses ASCII/Unicode, and decimals use floating-point notation. Python's types match these exactly:</p>
+      <ul>
+        <li><code>int</code> → stored as binary integer (like two's complement)</li>
+        <li><code>str</code> → stored as Unicode characters (each character = a number)</li>
+        <li><code>float</code> → stored as IEEE 754 floating-point (sign + exponent + mantissa)</li>
+        <li><code>bool</code> → stored as a single bit (True = 1, False = 0)</li>
+      </ul>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-tag">Try it</div>
+      <h4>Explore types</h4>
+      <ol>
+        <li>Create a variable with your age and print its type</li>
+        <li>What is <code>type(3.0)</code>? What about <code>type(3)</code>? Why are they different?</li>
+        <li>What is <code>type("3")</code>? Why is this different from <code>type(3)</code>?</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="section-number">03</div>
+    <h2>Binary & Hex in Python</h2>
+    <p class="section-intro">Python has built-in tools to convert between decimal, binary, and hexadecimal — the same conversions we practised by hand in class.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>built-in conversions</span></div>
+      <div class="code-content"><pre><span class="cm"># Decimal to binary</span>
+<span class="fn">print</span>(<span class="fn">bin</span>(<span class="num">13</span>))      <span class="cm"># 0b1101</span>
+
+<span class="cm"># Decimal to hexadecimal</span>
+<span class="fn">print</span>(<span class="fn">hex</span>(<span class="num">255</span>))     <span class="cm"># 0xff</span>
+
+<span class="cm"># Binary to decimal</span>
+<span class="fn">print</span>(<span class="num">0b1101</span>)       <span class="cm"># 13</span>
+
+<span class="cm"># Hex to decimal</span>
+<span class="fn">print</span>(<span class="num">0xff</span>)         <span class="cm"># 255</span>
+
+<span class="cm"># You can also use int() with a base</span>
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="str">"1101"</span>, <span class="num">2</span>))   <span class="cm"># 13  (base 2 = binary)</span>
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="str">"ff"</span>, <span class="num">16</span>))     <span class="cm"># 255 (base 16 = hex)</span></pre></div>
+    </div>
+
+    <div class="tip">
+      <strong>Notice the prefixes:</strong> <code>0b</code> means binary, <code>0x</code> means hexadecimal. These are the same prefixes from the lecture slides!
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-tag">Try it</div>
+      <h4>Check your homework</h4>
+      <ol>
+        <li>Use <code>bin()</code> to convert 19 to binary. Does it match your answer from the lecture exercise?</li>
+        <li>Use <code>hex()</code> to convert 181 to hex. Verify: is it <code>0xB5</code>?</li>
+        <li>What is <code>0xF0A</code> in decimal? Use Python to check</li>
+        <li>Convert the binary number <code>0b100101</code> to decimal. Does it equal 37? (This was Figure 1.14 in the slides!)</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <div class="section-number">04</div>
+    <h2>Build Your Own Binary Converter</h2>
+    <p class="section-intro">Instead of using <code>bin()</code>, let's write the algorithm from the lecture (Figure 1.15) ourselves. This is real programming — turning an algorithm into code.</p>
+
+    <div class="concept-box">
+      <h3><span class="icon">📋</span> The algorithm (from lecture)</h3>
+      <p>To convert a decimal number to binary:</p>
+      <ol>
+        <li>Divide the number by 2, record the remainder</li>
+        <li>Keep dividing the quotient by 2, recording remainders</li>
+        <li>Read the remainders from bottom to top = binary number</li>
+      </ol>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>the algorithm as code</span></div>
+      <div class="code-content"><pre><span class="kw">def</span> <span class="fn">to_binary</span>(<span class="var">number</span>):
+    <span class="kw">if</span> <span class="var">number</span> <span class="op">==</span> <span class="num">0</span>:
+        <span class="kw">return</span> <span class="str">"0"</span>
+
+    <span class="var">bits</span> <span class="op">=</span> <span class="str">""</span>     <span class="cm"># We'll build the binary string here</span>
+
+    <span class="kw">while</span> <span class="var">number</span> <span class="op">></span> <span class="num">0</span>:
+        <span class="var">remainder</span> <span class="op">=</span> <span class="var">number</span> <span class="op">%</span> <span class="num">2</span>    <span class="cm"># % gives the remainder</span>
+        <span class="var">bits</span> <span class="op">=</span> <span class="fn">str</span>(<span class="var">remainder</span>) <span class="op">+</span> <span class="var">bits</span>  <span class="cm"># Add to the LEFT</span>
+        <span class="var">number</span> <span class="op">=</span> <span class="var">number</span> <span class="op">//</span> <span class="num">2</span>   <span class="cm"># // gives integer division</span>
+
+    <span class="kw">return</span> <span class="var">bits</span>
+
+<span class="cm"># Test it!</span>
+<span class="fn">print</span>(<span class="fn">to_binary</span>(<span class="num">13</span>))   <span class="cm"># Should print: 1101</span>
+<span class="fn">print</span>(<span class="fn">to_binary</span>(<span class="num">19</span>))   <span class="cm"># Should print: 10011</span>
+<span class="fn">print</span>(<span class="fn">to_binary</span>(<span class="num">255</span>))  <span class="cm"># Should print: 11111111</span></pre></div>
+    </div>
+
+    <div class="output-block">
+      <div class="output-label">Output</div>
+      1101
+10011
+11111111
+    </div>
+
+    <div class="tip">
+      <strong>New Python concepts here:</strong>
+      <code>%</code> (modulo) gives the remainder after division.
+      <code>//</code> (floor division) divides and rounds down.
+      <code>while</code> repeats a block of code as long as a condition is true.
+      <code>def</code> creates a reusable function.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-tag">Try it</div>
+      <h4>Extend the converter</h4>
+      <ol>
+        <li>Copy the code and test it with the number 37. Does it give <code>100101</code>?</li>
+        <li>Add a print statement inside the while loop to show each step: <code>print(f"{number} ÷ 2 = {number // 2} remainder {number % 2}")</code></li>
+        <li><strong>Harder:</strong> Can you modify the function to convert to hexadecimal instead? (Hint: divide by 16 instead of 2, and use <code>"0123456789ABCDEF"[remainder]</code> to get the hex digit)</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 5 -->
+  <div class="section">
+    <div class="section-number">05</div>
+    <h2>ASCII & Unicode</h2>
+    <p class="section-intro">In the lecture, we learned that text is stored as numbers. Python lets us see this directly.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>text ↔ numbers</span></div>
+      <div class="code-content"><pre><span class="cm"># ord() gives the number for a character</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="str">"A"</span>))    <span class="cm"># 65</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="str">"a"</span>))    <span class="cm"># 97</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="str">"0"</span>))    <span class="cm"># 48  (the character "0", not the number!)</span>
+
+<span class="cm"># chr() gives the character for a number</span>
+<span class="fn">print</span>(<span class="fn">chr</span>(<span class="num">65</span>))     <span class="cm"># A</span>
+<span class="fn">print</span>(<span class="fn">chr</span>(<span class="num">72</span>))     <span class="cm"># H</span>
+
+<span class="cm"># Encode a full word</span>
+<span class="var">word</span> <span class="op">=</span> <span class="str">"Hello"</span>
+<span class="kw">for</span> <span class="var">char</span> <span class="kw">in</span> <span class="var">word</span>:
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"'{char}' = {<span class="fn">ord</span>(char)} = {<span class="fn">bin</span>(<span class="fn">ord</span>(char))}"</span>)</pre></div>
+    </div>
+
+    <div class="output-block">
+      <div class="output-label">Output</div>
+      'H' = 72 = 0b1001000
+'e' = 101 = 0b1100101
+'l' = 108 = 0b1101100
+'l' = 108 = 0b1101100
+'o' = 111 = 0b1101111
+    </div>
+
+    <div class="concept-box">
+      <h3><span class="icon">🌏</span> Unicode — beyond English</h3>
+      <p>ASCII only covers English (128 characters). Unicode covers every language. Python handles Unicode natively:</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>unicode in action</span></div>
+      <div class="code-content"><pre><span class="cm"># Chinese characters have much larger code numbers</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="str">"你"</span>))    <span class="cm"># 20320</span>
+<span class="fn">print</span>(<span class="fn">ord</span>(<span class="str">"好"</span>))    <span class="cm"># 22909</span>
+<span class="fn">print</span>(<span class="fn">hex</span>(<span class="fn">ord</span>(<span class="str">"你"</span>)))  <span class="cm"># 0x4f60</span>
+
+<span class="cm"># This is why we need more than 8 bits for text!</span>
+<span class="cm"># ASCII: 7 bits = 128 characters (English only)</span>
+<span class="cm"># Unicode: up to 21 bits = 1,114,112 characters (all languages)</span>
+
+<span class="fn">print</span>(<span class="fn">chr</span>(<span class="num">128522</span>))  <span class="cm"># 😊 even emoji have Unicode numbers!</span></pre></div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-tag">Try it</div>
+      <h4>Decode a secret message</h4>
+      <ol>
+        <li>What character is <code>chr(87)</code>? What about <code>chr(111)</code>, <code>chr(119)</code>?</li>
+        <li>Write code to find the ASCII numbers for each letter in your name</li>
+        <li>The numbers <code>[67, 73, 84, 88, 48, 48, 48, 49]</code> spell something. Use a <code>for</code> loop and <code>chr()</code> to decode it!</li>
+        <li>Try <code>ord()</code> on a character from your own language. How many bits would you need to store it? (Hint: use <code>bin(ord("字"))</code> and count the digits)</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 6 -->
+  <div class="section">
+    <div class="section-number">06</div>
+    <h2>Two's Complement in Python</h2>
+    <p class="section-intro">Let's verify the two's complement examples from the lecture with actual code.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>two's complement by hand</span></div>
+      <div class="code-content"><pre><span class="kw">def</span> <span class="fn">twos_complement</span>(<span class="var">number</span>, <span class="var">bits</span><span class="op">=</span><span class="num">4</span>):
+    <span class="str">"""Convert a number to its two's complement binary string."""</span>
+    <span class="kw">if</span> <span class="var">number</span> <span class="op">>=</span> <span class="num">0</span>:
+        <span class="cm"># Positive: just convert to binary, pad with zeros</span>
+        <span class="var">binary</span> <span class="op">=</span> <span class="fn">bin</span>(<span class="var">number</span>)[<span class="num">2</span>:]  <span class="cm"># remove '0b'</span>
+        <span class="kw">return</span> <span class="var">binary</span>.<span class="fn">zfill</span>(<span class="var">bits</span>)  <span class="cm"># pad with zeros</span>
+    <span class="kw">else</span>:
+        <span class="cm"># Negative: invert bits and add 1</span>
+        <span class="var">positive</span> <span class="op">=</span> <span class="fn">bin</span>(<span class="fn">abs</span>(<span class="var">number</span>))[<span class="num">2</span>:].<span class="fn">zfill</span>(<span class="var">bits</span>)
+        <span class="cm"># Flip every bit</span>
+        <span class="var">flipped</span> <span class="op">=</span> <span class="str">""</span>.<span class="fn">join</span>(<span class="str">"1"</span> <span class="kw">if</span> <span class="var">b</span> <span class="op">==</span> <span class="str">"0"</span> <span class="kw">else</span> <span class="str">"0"</span> <span class="kw">for</span> <span class="var">b</span> <span class="kw">in</span> <span class="var">positive</span>)
+        <span class="cm"># Add 1</span>
+        <span class="var">result</span> <span class="op">=</span> <span class="fn">bin</span>(<span class="fn">int</span>(<span class="var">flipped</span>, <span class="num">2</span>) <span class="op">+</span> <span class="num">1</span>)[<span class="num">2</span>:]
+        <span class="kw">return</span> <span class="var">result</span>[<span class="op">-</span><span class="var">bits</span>:]  <span class="cm"># keep only the last N bits</span>
+
+<span class="cm"># Test with examples from the lecture slides</span>
+<span class="fn">print</span>(<span class="kw">f</span><span class="str">" 5 = {<span class="fn">twos_complement</span>(5)}"</span>)    <span class="cm"># 0101</span>
+<span class="fn">print</span>(<span class="kw">f</span><span class="str">"-5 = {<span class="fn">twos_complement</span>(-5)}"</span>)   <span class="cm"># 1011</span>
+<span class="fn">print</span>(<span class="kw">f</span><span class="str">"-6 = {<span class="fn">twos_complement</span>(-6)}"</span>)   <span class="cm"># 1010</span>
+<span class="fn">print</span>(<span class="kw">f</span><span class="str">"-3 = {<span class="fn">twos_complement</span>(-3)}"</span>)   <span class="cm"># 1101</span></pre></div>
+    </div>
+
+    <div class="output-block">
+      <div class="output-label">Output</div>
+       5 = 0101
+-5 = 1011
+-6 = 1010
+-3 = 1101
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>verifying addition from the slides</span></div>
+      <div class="code-content"><pre><span class="cm"># From slide: 5 + (-5) should equal 0</span>
+<span class="var">a</span> <span class="op">=</span> <span class="str">"0101"</span>  <span class="cm"># 5</span>
+<span class="var">b</span> <span class="op">=</span> <span class="str">"1011"</span>  <span class="cm"># -5 in two's complement</span>
+
+<span class="cm"># Add them as binary numbers</span>
+<span class="var">result</span> <span class="op">=</span> <span class="fn">bin</span>(<span class="fn">int</span>(<span class="var">a</span>, <span class="num">2</span>) <span class="op">+</span> <span class="fn">int</span>(<span class="var">b</span>, <span class="num">2</span>))[<span class="num">2</span>:]
+<span class="fn">print</span>(<span class="kw">f</span><span class="str">"{a} + {b} = {result}"</span>)
+<span class="cm"># Output: 0101 + 1011 = 10000</span>
+<span class="cm"># Discard the carry bit → 0000 = 0 ✓</span></pre></div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-tag">Try it</div>
+      <h4>Verify the lecture examples</h4>
+      <ol>
+        <li>Use the <code>twos_complement()</code> function to convert -2 with 4 bits. Do you get <code>1110</code>?</li>
+        <li>Verify: 6 + (-2) in binary. Convert both to 4-bit two's complement, add them, and check the result is 4</li>
+        <li>Use 8 bits instead: <code>twos_complement(-6, 8)</code>. What do you get?</li>
+        <li>What happens if you try <code>twos_complement(-9, 4)</code>? Can -9 fit in 4 bits? Why not?</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 7 -->
+  <div class="section">
+    <div class="section-number">07</div>
+    <h2>Challenge: Overflow Detector</h2>
+    <p class="section-intro">From the lecture: overflow happens when a result is too big (or too small) for the number of bits. Let's build a tool that detects it.</p>
+
+    <div class="challenge">
+      <div class="challenge-tag">Challenge</div>
+      <h4>Build an overflow checker</h4>
+      <p>Write a program that:</p>
+      <ol style="padding-left: 20px; margin-top: 10px; color: var(--text-dim); font-size: 0.92em;">
+        <li style="margin-bottom: 6px;">Asks the user for two numbers and a bit width (e.g. 4 bits)</li>
+        <li style="margin-bottom: 6px;">Calculates the range for that bit width using two's complement (e.g. 4 bits = -8 to +7)</li>
+        <li style="margin-bottom: 6px;">Adds the two numbers and checks if the result fits in that range</li>
+        <li style="margin-bottom: 6px;">Prints whether overflow occurred</li>
+      </ol>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span class="lang">Python</span><span>starter code — fill in the blanks</span></div>
+      <div class="code-content"><pre><span class="kw">def</span> <span class="fn">check_overflow</span>(<span class="var">a</span>, <span class="var">b</span>, <span class="var">bits</span>):
+    <span class="cm"># Two's complement range for N bits:</span>
+    <span class="cm"># minimum = -(2^(bits-1))</span>
+    <span class="cm"># maximum = 2^(bits-1) - 1</span>
+
+    <span class="var">minimum</span> <span class="op">=</span> <span class="op">???</span>    <span class="cm"># Fill this in!</span>
+    <span class="var">maximum</span> <span class="op">=</span> <span class="op">???</span>    <span class="cm"># Fill this in!</span>
+
+    <span class="var">result</span> <span class="op">=</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>
+
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Range for {bits} bits: {minimum} to {maximum}"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"{a} + {b} = {result}"</span>)
+
+    <span class="kw">if</span> <span class="var">result</span> <span class="op"><</span> <span class="var">minimum</span> <span class="kw">or</span> <span class="var">result</span> <span class="op">></span> <span class="var">maximum</span>:
+        <span class="fn">print</span>(<span class="str">"⚠ OVERFLOW!"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"✓ No overflow"</span>)
+
+<span class="cm"># Test cases from the lecture</span>
+<span class="fn">check_overflow</span>(<span class="num">5</span>, <span class="num">4</span>, <span class="num">4</span>)    <span class="cm"># Should overflow (9 > 7)</span>
+<span class="fn">check_overflow</span>(<span class="num">3</span>, <span class="num">2</span>, <span class="num">4</span>)    <span class="cm"># Should be fine (5 ≤ 7)</span>
+<span class="fn">check_overflow</span>(<span class="num">-3</span>, <span class="num">-6</span>, <span class="num">4</span>)  <span class="cm"># Should overflow (-9 < -8)</span></pre></div>
+    </div>
+
+    <div class="tip">
+      <strong>Hint:</strong> In Python, <code>2 ** n</code> means "2 to the power of n". So <code>2 ** 3</code> = 8.
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-tag">Extra challenge</div>
+      <h4>For those who finish early</h4>
+      <ol>
+        <li>Modify the program to also show the result in binary using the <code>twos_complement()</code> function from earlier</li>
+        <li>Make it interactive: use <code>input()</code> to let the user type in any two numbers and a bit width</li>
+        <li>Add a loop so the program keeps asking for numbers until the user types "quit"</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="concept-box" style="text-align: center;">
+    <h3 style="justify-content: center;"><span class="icon">📚</span> Keep practising</h3>
+    <p style="max-width: 500px; margin: 0 auto;">
+      <strong>W3Schools Python Tutorial:</strong> w3schools.com/python<br>
+      <strong>Google Colab:</strong> colab.research.google.com<br>
+      <strong>Python visualiser</strong> (see your code run step by step):<br>
+      pythontutor.com
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

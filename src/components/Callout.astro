@@ -1,0 +1,27 @@
+---
+interface Props {
+  title: string;
+  tone?: "info" | "exercise" | "challenge";
+}
+
+const { title, tone = "info" } = Astro.props;
+
+const toneClasses = {
+  info: "border-blue-300/50 bg-blue-500/10",
+  exercise: "border-amber-300/50 bg-amber-400/10",
+  challenge: "border-pink-300/50 bg-pink-400/10",
+} as const;
+
+const labelClasses = {
+  info: "text-blue-100",
+  exercise: "text-amber-100",
+  challenge: "text-pink-100",
+} as const;
+---
+
+<section class:list={["my-6 rounded-2xl border px-4 py-4", toneClasses[tone]]}>
+  <h3 class:list={["!mt-0 !mb-2 text-lg font-semibold", labelClasses[tone]]}>{title}</h3>
+  <div class="text-sm text-slate-100 [&_code]:rounded [&_code]:bg-slate-900/80 [&_code]:px-1.5 [&_code]:py-0.5 [&_li]:my-1.5">
+    <slot />
+  </div>
+</section>

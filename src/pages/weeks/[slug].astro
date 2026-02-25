@@ -1,0 +1,34 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import WeekLayout from "../../layouts/WeekLayout.astro";
+import { sortWeeks } from "../../lib/weeks";
+
+export async function getStaticPaths() {
+  const weeks = (await getCollection("weeks")).sort(sortWeeks);
+
+  return weeks.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, weeks },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"weeks">;
+  weeks: CollectionEntry<"weeks">[];
+}
+
+const { entry, weeks } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const publishedWeeks = weeks.filter((week) => week.data.published);
+const currentPublishedIndex = publishedWeeks.findIndex((week) => week.id === entry.id);
+const prev = currentPublishedIndex > 0 ? publishedWeeks[currentPublishedIndex - 1] : undefined;
+const next =
+  currentPublishedIndex >= 0 && currentPublishedIndex < publishedWeeks.length - 1
+    ? publishedWeeks[currentPublishedIndex + 1]
+    : undefined;
+---
+
+<WeekLayout entry={entry} headings={headings} prev={prev} next={next}>
+  <Content />
+</WeekLayout>

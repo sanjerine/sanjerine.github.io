@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:wght@400;600;700&display=swap");
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(80, 115, 255, 0.26), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(39, 173, 141, 0.2), transparent 30%),
+    linear-gradient(180deg, #090c18 0%, #0f1322 45%, #0c111f 100%);
+  color: #e8edff;
+  font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Source Serif 4", ui-serif, Georgia, Cambria, serif;
+  letter-spacing: -0.01em;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+a {
+  text-underline-offset: 0.16em;
+}
+
+::selection {
+  background: rgba(100, 166, 255, 0.4);
+  color: #ffffff;
+}
+
+.workshop-prose {
+  --tw-prose-body: #d6def6;
+  --tw-prose-headings: #f8faff;
+  --tw-prose-links: #94b8ff;
+  --tw-prose-bold: #f1f6ff;
+  --tw-prose-counters: #9ab0da;
+  --tw-prose-bullets: #6780bb;
+  --tw-prose-hr: #243150;
+  --tw-prose-quotes: #dee7ff;
+  --tw-prose-quote-borders: #3a4f83;
+  --tw-prose-captions: #97a8cf;
+  --tw-prose-kbd: #f4f8ff;
+  --tw-prose-code: #d3e4ff;
+  --tw-prose-pre-code: #dce6ff;
+  --tw-prose-pre-bg: #0e1428;
+  --tw-prose-th-borders: #30406b;
+  --tw-prose-td-borders: #23325a;
+}
