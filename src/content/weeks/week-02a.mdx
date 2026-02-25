@@ -1,0 +1,420 @@
+---
+week: 2
+part: "a"
+title: "Python Fundamentals"
+summary: "Your first steps in Python — using code to explore binary, hexadecimal, and text encoding from this week's lectures."
+published: true
+releaseDate: 2026-02-25
+estimatedHours: 2
+prerequisites:
+  - Lecture topics on binary and number systems.
+  - A Google account (for Google Colab).
+learningOutcomes:
+  - Write and run Python code in Google Colab.
+  - Use variables and understand Python's core data types.
+  - Perform arithmetic in Python including integer division and modulo.
+  - Use bin(), hex(), and int() to convert between number systems.
+  - Use ord() and chr() to explore text encoding.
+---
+
+import Callout from "../../components/Callout.astro";
+
+## Workshop flow
+
+This is your first time writing code. Here is what we will do:
+
+1. Set up Google Colab so you can write and run code in your browser.
+2. Learn the basics: printing, variables, types, and maths.
+3. Use Python to convert between decimal, binary, and hexadecimal.
+4. See how text is stored as numbers (ASCII and Unicode).
+5. Put it all together in a mini-project.
+
+<Callout tone="info" title="No prior programming needed">
+
+This workshop starts from zero. Every idea is explained before you use it. If you get stuck, ask your teacher (me!).
+
+</Callout>
+
+## What is Python?
+
+A **programming language** lets you give instructions to a computer by typing text. You type a command, and the computer does exactly what you asked.
+
+**Python** is one of the most popular programming languages. It is easy to read because it looks a bit like English. Think of Python as a calculator that can also work with text.
+
+We will use Python to practise the ideas from your lectures: binary, hexadecimal, and how text is stored as numbers.
+
+## Setting up Google Colab
+
+Google Colab lets you write and run Python code in your browser. You do not need to install anything.
+
+1. Go to [colab.research.google.com](https://colab.research.google.com).
+2. Sign in with your Google account.
+3. Click **New notebook** (or **File > New notebook**).
+4. You will see a **code cell**. This is a grey box where you type code.
+5. Click inside the cell and type:
+
+```python
+print("Hello!")
+```
+
+6. Press the **play button** on the left of the cell, or press **Shift + Enter**.
+7. You should see `Hello!` below the cell. This is the **output** (the result).
+
+To add a new cell, move your mouse between two cells and click **+ Code**. You can also use the menu: **Insert > Code cell**.
+
+### What errors look like
+
+Try typing this code. It has a mistake on purpose:
+
+```python
+print("Hello!"
+```
+
+The closing `)` is missing. When you run it, Python shows a red error message. Do not worry. Errors are normal. The message tells you what went wrong and where to look.
+
+<Callout tone="exercise" title="Try it now">
+
+1. Print your name (e.g. `print("Sanjee")`).
+2. Print the number `42`.
+3. Remove a quote mark on purpose, run the code, and read the error message.
+
+</Callout>
+
+## Print and comments
+
+`print()` is a built-in command that shows output on the screen.
+
+- Text needs **quotes**: `print("hello")`
+- Numbers do **not** need quotes: `print(42)`
+- You can print maths: `print(3 + 5)`
+
+A **comment** starts with `#`. Python skips everything after `#` on that line. Comments are notes for you and other people reading your code.
+
+```python
+# This is a comment — Python skips it
+print("CITX0001")   # prints the unit code
+print(100)           # prints the number 100
+print(50 + 50)       # prints 100 (the result of 50 + 50)
+```
+
+<Callout tone="exercise" title="Print and comment practice">
+
+1. Print a message of your choice.
+2. Print a number.
+3. Print a maths calculation.
+4. Add a comment above each line that explains what it does.
+
+</Callout>
+
+## Variables
+
+A **variable** is like a labelled box that holds a value. You create one with `=`.
+
+In Python, `=` means **"store this value"**. It does not mean "equals" like in maths.
+
+```python
+name = "Alice"
+age = 19
+print(name)
+print(age)
+```
+
+You can **change** a variable by giving it a new value:
+
+```python
+score = 10
+print(score)
+
+score = 25
+print(score)
+```
+
+The second `print` shows `25` because we changed `score`.
+
+### Naming rules
+
+- Names can have letters, numbers, and underscores (`_`).
+- Names **cannot** start with a number. `2name` does not work.
+- Names **cannot** have spaces. Use underscores instead: `student_id`, not `student id`.
+- Capital letters matter: `Age` and `age` are two different variables.
+
+<Callout tone="exercise" title="Variable practice">
+
+1. Create variables called `name`, `student_id`, and `age`. Use your own values.
+2. Print all three.
+3. Change `age` to a different number and print it again. What do you see?
+
+</Callout>
+
+## Types: how Python stores data
+
+Every value in Python has a **type**. A type tells Python what kind of data it is. There are four main types:
+
+| Type    | What it stores       | Example            |
+| ------- | -------------------- | ------------------ |
+| `int`   | Whole numbers        | `19`, `-3`, `0`    |
+| `float` | Decimal numbers      | `3.14`, `-0.5`     |
+| `str`   | Text (called a "string") | `"hello"`, `"42"` |
+| `bool`  | True or false        | `True`, `False`    |
+
+Use `type()` to check the type of a value:
+
+```python
+print(type(19))
+print(type(3.14))
+print(type("hello"))
+print(type(True))
+```
+
+### Watch out: `"19"` vs `19`
+
+Quotes change the meaning. `"19"` is **text** (a string). `19` is a **number** (an integer). This is important when you combine values:
+
+```python
+print(5 + 3)       # 8 — adds the numbers
+print("5" + "3")   # "53" — joins the text together
+```
+
+`"5" + "3"` does not give `8`. It joins the two pieces of text into `"53"`.
+
+<Callout tone="info" title="Lecture connection">
+
+Each Python type connects to something from your lectures:
+
+- `int` — whole numbers stored in binary (base 2).
+- `str` — text, where each character has a number (Unicode code point).
+- `float` — decimal numbers stored using IEEE 754.
+- `bool` — true or false, like a single bit: `True` = 1, `False` = 0.
+
+</Callout>
+
+<Callout tone="exercise" title="Type detective">
+
+1. Use `type()` to check the types of: `42`, `3.0`, `"hello"`, `False`.
+2. Guess first: does `"5" + "3"` give `8` or `"53"`? Then run it to check.
+3. What does `type("42")` return? Why is it different from `type(42)`?
+
+</Callout>
+
+## Arithmetic in Python
+
+Python can do maths with these operators:
+
+| Operator | What it does           | Example    | Result |
+| -------- | ---------------------- | ---------- | ------ |
+| `+`      | Add                    | `7 + 3`    | `10`   |
+| `-`      | Subtract               | `7 - 3`    | `4`    |
+| `*`      | Multiply               | `7 * 3`    | `21`   |
+| `/`      | Divide                 | `7 / 3`    | `2.33…`|
+| `//`     | Divide and round down  | `7 // 3`   | `2`    |
+| `%`      | Remainder              | `7 % 3`    | `1`    |
+| `**`     | Power                  | `2 ** 3`   | `8`    |
+
+Two of these are very important for this unit:
+
+- `//` is **integer division**. It divides and removes the decimal part. `7 // 3` gives `2`, not `2.33`.
+- `%` is **modulo**. It gives the leftover (remainder) after division. `7 % 3` gives `1`, because 7 = 2 x 3 + **1**.
+
+We need `//` and `%` because they are the steps in the lecture algorithm for converting decimal to binary.
+
+### Worked example: decimal 13 to binary
+
+The lecture algorithm says: keep dividing by 2, write down the remainder each time, then read the remainders from bottom to top.
+
+```python
+print(13 % 2)    # 1  (remainder)
+print(13 // 2)   # 6  (result of the division — use this next)
+
+print(6 % 2)     # 0
+print(6 // 2)    # 3
+
+print(3 % 2)     # 1
+print(3 // 2)    # 1
+
+print(1 % 2)     # 1
+print(1 // 2)    # 0  (result is 0, so we stop)
+```
+
+Read the remainders from bottom to top: **1, 1, 0, 1**. So 13 in binary is `1101`. You can check: `bin(13)` gives `0b1101`.
+
+<Callout tone="exercise" title="Arithmetic practice">
+
+1. Compute `2 ** 8` and `2 ** 16`. What do these numbers mean in computing?
+2. Do the decimal-to-binary steps for `19` using `//` and `%`.
+3. Check your answer with `bin(19)`.
+
+</Callout>
+
+## Binary and hexadecimal in Python
+
+Python has built-in tools to convert between number systems:
+
+```python
+print(bin(13))          # '0b1101'  — binary
+print(hex(255))         # '0xff'    — hexadecimal
+```
+
+The `0b` at the start means "this is a binary number". The `0x` at the start means "this is a hexadecimal number". You can also type these directly:
+
+```python
+print(0b1101)           # 13
+print(0xff)             # 255
+```
+
+To convert a text string of digits back to a decimal number, use `int()` with a second value that says what base the digits are in:
+
+```python
+print(int("1101", 2))   # 13  — reads "1101" as base 2 (binary)
+print(int("ff", 16))    # 255 — reads "ff" as base 16 (hex)
+```
+
+<Callout tone="exercise" title="Check your conversions">
+
+1. Convert your age to binary using `bin()`.
+2. Convert `181` to hexadecimal using `hex()`.
+3. Convert `0xF0A` to decimal.
+4. Convert `0b100101` to decimal.
+5. Pick one example from your lecture slides and check it with Python.
+
+</Callout>
+
+## Strings and text
+
+A **string** is a piece of text inside quotes. You can join two strings together with `+`:
+
+```python
+first = "Ada"
+last = "Lovelace"
+full = first + " " + last
+print(full)
+```
+
+Use `len()` to count how many characters are in a string:
+
+```python
+print(len("CITX0001"))   # 8
+```
+
+### Mixing strings and numbers
+
+You **cannot** join a string and a number with `+`. This gives an error:
+
+```python
+# This gives an error:
+# print("Age: " + 19)
+```
+
+You need to turn the number into text first using `str()`:
+
+```python
+age = 19
+print("Age: " + str(age))
+```
+
+<Callout tone="info" title="Lecture connection">
+
+Every character in a string is stored as a number (called a code point). In the next section, you will see exactly how this works.
+
+</Callout>
+
+<Callout tone="exercise" title="String practice">
+
+1. Store your first name and last name in two variables. Join them with a space and print the result.
+2. Try running `print("Age: " + 19)`. Read the error, then fix it using `str()`.
+3. What does `len("CITX0001")` give you?
+
+</Callout>
+
+## ASCII and Unicode: text as numbers
+
+Computers store everything as numbers, including text. Each character gets a number called a **code point**. The system that decides which number goes with which character is called an **encoding**.
+
+**ASCII** covers basic English letters (A–Z, a–z), digits (0–9), and some symbols. **Unicode** covers every language in the world, plus symbols and emoji.
+
+Python has two useful functions for this:
+
+- `ord("A")` — give it a character, it gives you the code point (a number).
+- `chr(65)` — give it a code point, it gives you the character.
+
+```python
+print(ord("A"))     # 65
+print(ord("a"))     # 97
+print(ord("0"))     # 48
+```
+
+You can then see how that number looks in binary:
+
+```python
+code = ord("A")
+print(code)         # 65
+print(bin(code))    # 0b1000001
+```
+
+So the letter "A" is stored as the number 65. In binary, that is `1000001`.
+
+### Unicode: beyond English
+
+Unicode includes characters from every language, and emoji too:
+
+```python
+print(ord("你"))       # 20320
+print(hex(ord("你")))  # 0x4f60
+print(chr(128522))     # 😊
+```
+
+<Callout tone="exercise" title="Code point exploration">
+
+1. Find the code point for each letter in your first name using `ord()`.
+2. What characters are these? `chr(87)`, `chr(111)`, `chr(119)`. What word do they spell?
+3. What is `chr(128640)`? (Hint: it is an emoji.)
+
+</Callout>
+
+## Putting it together
+
+Now let's use everything you learned in one mini-project: a **character inspector**. You give it a character, and it shows the code point, binary, and hexadecimal.
+
+```python
+# Character inspector
+character = "A"
+
+code_point = ord(character)
+binary = bin(code_point)
+hexadecimal = hex(code_point)
+
+print("Character: " + character)
+print("Code point: " + str(code_point))
+print("Binary: " + binary)
+print("Hex: " + hexadecimal)
+```
+
+This uses only things you learned today: variables, `ord()`, `bin()`, `hex()`, `str()`, and joining strings with `+`.
+
+<Callout tone="exercise" title="Character inspector exercises">
+
+1. Run the code with `"A"`. Does the output make sense?
+2. Change `character` to `"z"`. How is the output different?
+3. Try `"7"`. The character `"7"` has a different code point than the number 7.
+4. Try a space: `" "`. What code point does a space have?
+5. Try an emoji or a character from another language.
+
+</Callout>
+
+## What comes next
+
+Today you learned how to:
+
+- Set up and use Google Colab.
+- Use `print()`, comments, and variables.
+- Work with four types: `int`, `float`, `str`, `bool`.
+- Do maths with `+`, `-`, `*`, `/`, `//`, `%`, `**`.
+- Convert between decimal, binary, and hex using `bin()`, `hex()`, and `int()`.
+- Look at text encoding with `ord()` and `chr()`.
+
+In **Week 2b**, you will learn **if/else**, **loops**, and **functions**. Then you will use them to **build your own binary converter**, a **two's complement checker**, and an **overflow detector**.
+
+### Practice resources
+
+- [Google Colab](https://colab.research.google.com) — where you write and run code.
+- [Python Tutor](https://pythontutor.com) — see what your code does step by step.
+- [W3Schools Python](https://www.w3schools.com/python/) — short lessons on every Python topic.

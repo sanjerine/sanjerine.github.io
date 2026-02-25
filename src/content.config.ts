@@ -5,6 +5,7 @@ const weeks = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/weeks" }),
   schema: z.object({
     week: z.number().int().positive(),
+    part: z.string().optional(),
     title: z.string(),
     summary: z.string(),
     unitCode: z.string().default("CITX0001"),

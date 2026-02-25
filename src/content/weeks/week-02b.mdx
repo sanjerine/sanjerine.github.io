@@ -1,0 +1,511 @@
+---
+week: 2
+part: "b"
+title: "Control Flow and Algorithms"
+summary: "Learn if/else, loops, and functions, then build your own binary converter, two's complement verifier, and overflow detector."
+published: true
+releaseDate: 2026-03-04
+estimatedHours: 2
+prerequisites:
+  - Completion of Week 2a workshop.
+learningOutcomes:
+  - Use if/else to make decisions in Python.
+  - Use while and for loops to repeat actions.
+  - Define and call your own functions.
+  - Implement a decimal-to-binary converter from scratch.
+  - Build and test an overflow checker.
+---
+
+import Callout from "../../components/Callout.astro";
+
+## Workshop flow
+
+This workshop continues from Week 2a. You will learn three new ideas — making decisions, repeating actions, and creating reusable code — then use them to build real algorithms from your lectures.
+
+1. Compare values and make decisions with if/else.
+2. Repeat actions with while loops and for loops.
+3. Use f-strings for cleaner output.
+4. Write your own functions.
+5. Build a binary converter, two's complement checker, and overflow detector.
+
+<Callout tone="info" title="What you already know from Week 2a">
+
+`print()`, variables, types (`int`, `str`, `float`, `bool`), maths (`+`, `-`, `*`, `/`, `//`, `%`, `**`), `bin()`, `hex()`, `int()`, `ord()`, `chr()`, `str()`, `len()`, and joining strings with `+`.
+
+</Callout>
+
+## Comparisons and booleans
+
+Before we can make decisions, we need to compare values. Python has six **comparison operators**. They always give back `True` or `False`:
+
+| Operator | Meaning                  | Example      | Result  |
+| -------- | ------------------------ | ------------ | ------- |
+| `==`     | Equal to                 | `5 == 5`     | `True`  |
+| `!=`     | Not equal to             | `5 != 3`     | `True`  |
+| `<`      | Less than                | `3 < 5`      | `True`  |
+| `>`      | Greater than             | `3 > 5`      | `False` |
+| `<=`     | Less than or equal to    | `5 <= 5`     | `True`  |
+| `>=`     | Greater than or equal to | `3 >= 5`     | `False` |
+
+```python
+print(10 == 10)    # True
+print(10 != 5)     # True
+print(3 > 7)       # False
+print(255 <= 255)  # True
+```
+
+Be careful: `==` (two equals signs) **checks** if two values are the same. `=` (one equals sign) **stores** a value in a variable. They do different things.
+
+<Callout tone="exercise" title="Comparison practice">
+
+1. Check if `2 ** 8` equals `256`.
+2. Check if `ord("A")` is less than `ord("a")`.
+3. What does `type(3 > 5)` give you?
+
+</Callout>
+
+## Making decisions: if and else
+
+An `if` statement runs some code **only when a condition is true**. If the condition is false, the `else` code runs instead.
+
+```python
+number = 200
+
+if 0 <= number <= 255:
+    print("Fits in 8-bit unsigned")
+else:
+    print("Outside 8-bit unsigned range (0 to 255)")
+```
+
+### Indentation matters
+
+Look at the spaces before `print`. The code inside `if` and `else` must be **indented** (moved to the right by 4 spaces). This is how Python knows which lines belong inside the `if` block.
+
+```python
+temperature = 38
+
+if temperature > 37:
+    print("Fever detected")
+    print("Please see a doctor")
+
+print("Check complete")
+```
+
+The first two `print` lines are indented. They only run when the temperature is over 37. The last `print` is **not** indented, so it always runs no matter what.
+
+### Multiple conditions with elif
+
+Sometimes you have more than two options. Use `elif` (short for "else if") to check more conditions:
+
+```python
+number = 300
+
+if number < 0:
+    print("Negative numbers are not unsigned")
+elif number <= 15:
+    print("Fits in 4-bit unsigned (0 to 15)")
+elif number <= 255:
+    print("Fits in 8-bit unsigned (0 to 255)")
+elif number <= 65535:
+    print("Fits in 16-bit unsigned (0 to 65535)")
+else:
+    print("Needs more than 16 bits")
+```
+
+Python checks each condition from top to bottom. It runs the **first** one that is true, then skips the rest.
+
+This means negative values are handled first, so they are not incorrectly treated as unsigned.
+
+<Callout tone="exercise" title="Decision practice">
+
+1. Write an if/else that checks if a number is in the 8-bit unsigned range (0 to 255). Test it with `200` and `300`.
+2. Add `elif` to also check 4-bit (0 to 15) and 16-bit (0 to 65535) ranges.
+3. Test with `-5` and confirm your code says it is not unsigned.
+
+</Callout>
+
+## Repeating with while loops
+
+A **while loop** runs a block of code again and again, as long as a condition is true.
+
+```python
+count = 1
+
+while count <= 5:
+    print(count)
+    count = count + 1
+```
+
+This prints `1`, `2`, `3`, `4`, `5`. Each time the loop runs, `count` goes up by 1. When `count` reaches 6, the condition `count <= 5` is false, so the loop stops.
+
+### The condition must change
+
+If nothing inside the loop changes the condition, the loop will run forever and your program will freeze. Always make sure the loop gets closer to stopping each time it runs.
+
+### Tracing the decimal-to-binary algorithm
+
+Here is the lecture algorithm for converting decimal to binary. It uses a while loop:
+
+```python
+number = 13
+bits = ""
+
+while number > 0:
+    remainder = number % 2
+    bits = str(remainder) + bits
+    number = number // 2
+
+print(bits)
+```
+
+Let's follow what happens step by step:
+
+| Step | `number` | `number % 2` | `bits`   | `number // 2` |
+| ---- | -------- | ------------- | -------- | -------------- |
+| 1    | 13       | 1             | `"1"`    | 6              |
+| 2    | 6        | 0             | `"01"`   | 3              |
+| 3    | 3        | 1             | `"101"`  | 1              |
+| 4    | 1        | 1             | `"1101"` | 0              |
+
+When `number` becomes 0, the condition `number > 0` is false, so the loop stops. The result is `"1101"`.
+
+<Callout tone="exercise" title="While loop practice">
+
+1. Write a while loop that prints powers of 2 from 1 up to 256. (Hint: start with `power = 1` and multiply by 2 each time.)
+2. Do the step-by-step trace for the number `19` on paper. Then run the code to check your answer.
+
+</Callout>
+
+## Repeating with for loops
+
+A **for loop** runs code once for each item in a group. Two common groups are **strings** (text) and **ranges** (lists of numbers).
+
+### Looping through a string
+
+```python
+for char in "Hello":
+    print(char)
+```
+
+This prints each letter on its own line: `H`, `e`, `l`, `l`, `o`. The variable `char` takes the value of each letter, one at a time.
+
+### Looping through numbers with range
+
+`range()` gives you a sequence of numbers:
+
+```python
+for i in range(5):
+    print(i)
+```
+
+This prints `0`, `1`, `2`, `3`, `4`. Note: `range(5)` starts at 0 and stops **before** 5 (so it does not include 5).
+
+You can also set a starting number: `range(1, 6)` gives `1, 2, 3, 4, 5`.
+
+<Callout tone="exercise" title="For loop practice">
+
+1. Use a for loop to print the `ord()` of each letter in your first name.
+2. Use `range()` to print the numbers 1 to 10.
+
+</Callout>
+
+## f-strings
+
+In Week 2a, you joined text and numbers using `str()` and `+`:
+
+```python
+age = 19
+print("Age: " + str(age))
+```
+
+**f-strings** are a shorter way to do the same thing. Put `f` before the opening quote, then put values inside `{}`:
+
+```python
+age = 19
+print(f"Age: {age}")
+```
+
+Both lines do the same thing, but the f-string is easier to read. You can put any code inside `{}`:
+
+```python
+number = 65
+print(f"Character: {chr(number)}")
+print(f"Binary: {bin(number)}")
+```
+
+<Callout tone="exercise" title="f-string practice">
+
+Rewrite the character inspector from Week 2a using f-strings. Take a character stored in a variable and print its code point, binary, and hex. Use f-strings instead of `str()` and `+`.
+
+</Callout>
+
+## Writing your own functions
+
+A **function** is a block of code that you give a name to. You can then run it whenever you want, as many times as you want.
+
+You have already used built-in functions like `print()`, `bin()`, and `ord()`. Now you will make your own.
+
+```python
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Alice")
+greet("Bob")
+```
+
+Here is what each part means:
+
+- `def` tells Python you are creating a new function.
+- `greet` is the name of the function.
+- `name` is a **parameter**. It is a placeholder. When you call `greet("Alice")`, `name` becomes `"Alice"`.
+- The indented line is the **body**. This is the code that runs when you call the function.
+
+### Returning a value
+
+A function can also give back a result using `return`. This lets you save the result and use it later.
+
+```python
+def to_hex(number):
+    return hex(number)
+
+result = to_hex(255)
+print(result)
+```
+
+`return` sends a value back to the code that called the function. If you do not use `return`, the function gives back `None` (which means "nothing").
+
+<Callout tone="exercise" title="Function practice">
+
+1. Write a function called `double` that takes a number and gives back that number times 2.
+2. Write a function called `to_hex_string` that takes a number and gives back its hex string using `hex()`.
+3. Call both functions and print the results to check they work.
+
+</Callout>
+
+## Build your own decimal-to-binary converter
+
+Now let's put while loops, `//`, `%`, and functions together. We will build a decimal-to-binary converter. This is the same algorithm from your lectures.
+
+In this version, we assume the input is a non-negative integer.
+
+```python
+def to_binary(number):
+    if number == 0:
+        return "0"
+
+    bits = ""
+
+    while number > 0:
+        remainder = number % 2
+        bits = str(remainder) + bits
+        number = number // 2
+
+    return bits
+```
+
+Here is what each part does:
+
+- **Line 1:** We create a function called `to_binary`. It takes one number.
+- **Lines 2–3:** If the number is 0, just give back `"0"`.
+- **Line 5:** `bits` starts empty. We will build the binary number inside this string.
+- **Line 7:** The while loop keeps going as long as the number is greater than 0.
+- **Line 8:** `% 2` gives the remainder. This is the next binary digit (0 or 1).
+- **Line 9:** We add the remainder to the **front** of `bits`.
+- **Line 10:** `// 2` divides the number and removes the decimal part. This gives us the next number to work with.
+- **Line 12:** When the loop finishes, `bits` has the full binary result.
+
+Test it:
+
+```python
+print(to_binary(13))     # 1101
+print(to_binary(19))     # 10011
+print(to_binary(255))    # 11111111
+print(to_binary(0))      # 0
+```
+
+<Callout tone="exercise" title="Extend the converter">
+
+1. Test with `37`. Check that the result is `100101`.
+2. Add a print inside the loop to see each step: `print(f"remainder: {remainder}, bits so far: {bits}, next number: {number}")`. Remove it when you are done.
+3. Hard mode: change this code to convert decimal to hexadecimal instead. (Hint: divide by 16 instead of 2. Remainders above 9 need letters: 10 = `a`, 11 = `b`, ..., 15 = `f`.)
+
+</Callout>
+
+## ASCII and Unicode with loops
+
+Now that you know for loops and f-strings, you can look at a whole word instead of one character at a time.
+
+### Encoding a word
+
+```python
+word = "Hello"
+
+for char in word:
+    print(f"'{char}' = {ord(char)} = {bin(ord(char))}")
+```
+
+This goes through each letter and prints its code point and binary.
+
+### Decoding a list of numbers
+
+If you have a list of code point numbers, you can turn them back into characters:
+
+```python
+code_points = [67, 73, 84, 88, 48, 48, 48, 49]
+message = ""
+
+for code in code_points:
+    message = message + chr(code)
+
+print(message)
+```
+
+<Callout tone="exercise" title="Encoding and decoding">
+
+1. Use a for loop to print the code point and binary of each letter in your full name.
+2. Decode this message: `[67, 73, 84, 88, 48, 48, 48, 49]`. What does it say?
+3. Make your own secret message as a list of code points. Ask a classmate to decode it.
+
+</Callout>
+
+## Two's complement with Python
+
+Two's complement is how computers store **negative** numbers in binary. For negative inputs, the algorithm from your lectures has three steps:
+
+1. Write the positive version of the number in binary. Add zeros on the left until it is the right length.
+2. **Flip** every bit: change each 0 to 1, and each 1 to 0.
+3. Add 1.
+
+For `N` bits, the valid two's complement range is `-2^(N-1)` to `2^(N-1) - 1`. We will check that first.
+
+Here is that algorithm in Python:
+
+```python
+def twos_complement(number, bits):
+    minimum = -(2 ** (bits - 1))
+    maximum = (2 ** (bits - 1)) - 1
+
+    if number < minimum or number > maximum:
+        return f"Error: {number} is out of range for {bits}-bit two's complement ({minimum} to {maximum})"
+
+    if number >= 0:
+        binary = bin(number)[2:]
+        while len(binary) < bits:
+            binary = "0" + binary
+        return binary
+
+    positive = bin(abs(number))[2:]
+    while len(positive) < bits:
+        positive = "0" + positive
+
+    flipped = ""
+    for bit in positive:
+        if bit == "0":
+            flipped = flipped + "1"
+        else:
+            flipped = flipped + "0"
+
+    result = bin(int(flipped, 2) + 1)[2:]
+    while len(result) < bits:
+        result = "0" + result
+    return result[-bits:]
+```
+
+Here is what each part does:
+
+- **Range check first:** We compute the smallest and largest values that fit in the chosen bit width. If the value is outside that range, we return an error message.
+- **If the number is 0 or positive:** Convert it to binary with `bin()`. Then use a while loop to add zeros on the left until it is long enough.
+- **If the number is negative:**
+  1. Get the binary of the positive version. Pad it with zeros.
+  2. Flip each bit with a for loop: if the bit is `"0"`, add `"1"` to the result. If it is `"1"`, add `"0"`.
+  3. Add 1: turn the flipped string back into a number with `int(flipped, 2)`, add 1, then turn it back into binary.
+  4. Left-pad if needed, then keep only the last `bits` characters with `result[-bits:]`.
+
+Test it:
+
+```python
+print(f" 5 in 4-bit: {twos_complement(5, 4)}")
+print(f"-5 in 4-bit: {twos_complement(-5, 4)}")
+print(f"-6 in 4-bit: {twos_complement(-6, 4)}")
+print(f"-3 in 4-bit: {twos_complement(-3, 4)}")
+```
+
+If you try a value outside the range (for example `-9` in 4-bit), the function returns an error message instead of a misleading bit string.
+
+You can also check addition from your lecture examples:
+
+In this quick check, we add the two bit patterns and then keep the last 4 bits (drop the carry-out):
+
+```python
+a = "0101"   # 5
+b = "1011"   # -5 in 4-bit two's complement
+
+sum_bits = bin(int(a, 2) + int(b, 2))[2:].zfill(5)
+print(f"{a} + {b} = {sum_bits}")
+print(f"Keep last 4 bits -> {sum_bits[-4:]}")
+```
+
+Interpretation: `0101` means `+5` and `1011` means `-5` in 4-bit two's complement. The 5-bit sum is `10000`; dropping the carry-out leaves `0000`.
+
+<Callout tone="exercise" title="Two's complement practice">
+
+1. Compute `twos_complement(-2, 4)`. Does it match your lecture notes?
+2. Check `6 + (-2)` in 4-bit.
+3. Compute `twos_complement(-6, 8)` (negative 6 using 8 bits).
+4. Try `twos_complement(-9, 4)`. What message do you get, and why? (Hint: what is the 4-bit two's complement range?)
+
+</Callout>
+
+## Challenge: overflow detector
+
+Build a tool that checks if adding two numbers gives a result that is too big (or too small) to store in N bits. In two's complement, the range for N bits is **-2^(N-1)** to **2^(N-1) - 1**.
+
+This version takes normal decimal inputs, computes their sum, then checks whether that sum fits in the chosen signed N-bit range.
+
+```python
+def check_overflow(a, b, bits):
+    minimum = -(2 ** (bits - 1))
+    maximum = (2 ** (bits - 1)) - 1
+
+    result = a + b
+
+    print(f"Range for {bits} bits: {minimum} to {maximum}")
+    print(f"{a} + {b} = {result}")
+
+    if result < minimum or result > maximum:
+        print("OVERFLOW")
+    else:
+        print("No overflow")
+
+
+check_overflow(5, 4, 4)
+check_overflow(3, 2, 4)
+check_overflow(-3, -6, 4)
+```
+
+<Callout tone="challenge" title="Extension ideas">
+
+1. Show the binary of each number using your `twos_complement` function.
+2. Use `input()` to let the user type in the numbers and bit width. Remember: `input()` gives you text, so use `int()` to turn it into a number. Example: `a = int(input("Enter first number: "))`.
+3. Put everything inside a while loop that keeps asking for input until the user types `quit`.
+
+</Callout>
+
+## What comes next
+
+Today you learned how to:
+
+- Compare values and make decisions with `if`, `elif`, and `else`.
+- Repeat code with `while` loops and `for` loops.
+- Write cleaner output with f-strings.
+- Create your own functions with `def` and `return`.
+- Build a decimal-to-binary converter from the lecture algorithm.
+- Check two's complement and detect overflow.
+
+In **Week 3**, you will use these skills on new topics. Keep practising. The more you code, the easier it gets.
+
+### Practice resources
+
+- [Google Colab](https://colab.research.google.com) — where you write and run code.
+- [Python Tutor](https://pythontutor.com) — see what your code does step by step.
+- [W3Schools Python](https://www.w3schools.com/python/) — short lessons on every Python topic.

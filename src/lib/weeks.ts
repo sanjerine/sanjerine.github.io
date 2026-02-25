@@ -5,7 +5,11 @@ export type WeekEntry = CollectionEntry<"weeks">;
 export const COURSE_START_WEEK = 2;
 
 export function sortWeeks(a: WeekEntry, b: WeekEntry): number {
-  return a.data.week - b.data.week;
+  const weekDiff = a.data.week - b.data.week;
+  if (weekDiff !== 0) return weekDiff;
+  const partA = a.data.part ?? "";
+  const partB = b.data.part ?? "";
+  return partA.localeCompare(partB);
 }
 
 export function isWeekInCourseWindow(entry: WeekEntry): boolean {
@@ -21,7 +25,8 @@ export function listStudentVisibleWeeks(entries: WeekEntry[]): WeekEntry[] {
 }
 
 export function weekLabel(entry: WeekEntry): string {
-  return `Week ${String(entry.data.week).padStart(2, "0")}`;
+  const num = String(entry.data.week).padStart(2, "0");
+  return `Week ${num}${entry.data.part ?? ""}`;
 }
 
 export function weekHref(entry: WeekEntry): string {

@@ -10,7 +10,7 @@ const { title, description = "Weekly Python workshops for CITX0001." } = Astro.p
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/weeks/week-02/", label: "Start Week 02" },
+  { href: "/weeks/week-02a/", label: "Start Week 02" },
   { href: "/weeks/", label: "Workshop Archive" },
 ];
 
@@ -19,12 +19,12 @@ function isNavActive(href: string): boolean {
     return Astro.url.pathname === "/";
   }
 
-  if (href === "/weeks/week-02/") {
-    return Astro.url.pathname === "/weeks/week-02/";
+  if (href === "/weeks/week-02a/") {
+    return Astro.url.pathname === "/weeks/week-02a/";
   }
 
   if (href === "/weeks/") {
-    return Astro.url.pathname.startsWith("/weeks/") && Astro.url.pathname !== "/weeks/week-02/";
+    return Astro.url.pathname.startsWith("/weeks/") && Astro.url.pathname !== "/weeks/week-02a/";
   }
 
   return Astro.url.pathname.startsWith(href);
@@ -36,6 +36,7 @@ function isNavActive(href: string): boolean {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>" />
     <title>{title}</title>
     <meta name="description" content={description} />
   </head>

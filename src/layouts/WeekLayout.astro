@@ -52,7 +52,7 @@ const releaseDate = entry.data.releaseDate
       <div class="rounded-2xl border border-[#d1c0a6] bg-white/78 p-4 text-sm text-[#4f5f72]">
         <p class="kicker">At a glance</p>
         <ul class="mt-3 space-y-2">
-          <li>Week number: {entry.data.week}</li>
+          <li>Week number: {entry.data.week}{entry.data.part ?? ""}</li>
           <li>Content type: Python workshop</li>
           <li>Format: Guided practice and exercises</li>
         </ul>
@@ -94,31 +94,44 @@ const releaseDate = entry.data.releaseDate
     )}
   </div>
 
-  <nav class="mt-6 grid gap-3 sm:grid-cols-3">
-    <div>
-      {prev ? (
-        <a href={weekHref(prev)} class="surface-card block rounded-2xl px-4 py-3 text-sm text-[#203247] transition hover:-translate-y-0.5">
-          <span class="block text-xs uppercase tracking-[0.16em] text-[#6a7785]">Previous</span>
-          <span class="mt-1 block font-medium">{weekLabel(prev)}: {prev.data.title}</span>
+  <nav class="mt-8">
+    <div class="mb-4 h-px bg-gradient-to-r from-transparent via-[var(--line)] to-transparent"></div>
+
+    <div class:list={[
+      "flex gap-3",
+      !prev && next ? "justify-end" : "",
+      prev && !next ? "justify-start" : "",
+      prev && next ? "justify-between" : "",
+    ]}>
+      {prev && (
+        <a href={weekHref(prev)} class="week-nav-link group flex items-center gap-3 sm:max-w-[50%]">
+          <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--line)] bg-white/60 text-[var(--ink-soft)] transition group-hover:border-[var(--accent)] group-hover:bg-[var(--accent-soft)] group-hover:text-[var(--accent)]">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="min-w-0">
+            <span class="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">Previous</span>
+            <span class="mt-0.5 block truncate text-sm font-medium text-[var(--ink)]">{weekLabel(prev)}: {prev.data.title}</span>
+          </span>
         </a>
-      ) : (
-        <div class="surface-card rounded-2xl px-4 py-3 text-sm text-[#6a7785]">No previous week</div>
+      )}
+      {next && (
+        <a href={weekHref(next)} class="week-nav-link group flex items-center gap-3 text-right sm:max-w-[50%]">
+          <span class="min-w-0">
+            <span class="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ink-soft)]">Next</span>
+            <span class="mt-0.5 block truncate text-sm font-medium text-[var(--ink)]">{weekLabel(next)}: {next.data.title}</span>
+          </span>
+          <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--line)] bg-white/60 text-[var(--ink-soft)] transition group-hover:border-[var(--accent)] group-hover:bg-[var(--accent-soft)] group-hover:text-[var(--accent)]">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
       )}
     </div>
 
-    <a href="/weeks/" class="btn-secondary self-center text-sm font-medium">
-      All weeks
-    </a>
-
-    <div>
-      {next ? (
-        <a href={weekHref(next)} class="surface-card block rounded-2xl px-4 py-3 text-sm text-[#203247] transition hover:-translate-y-0.5">
-          <span class="block text-xs uppercase tracking-[0.16em] text-[#6a7785]">Next</span>
-          <span class="mt-1 block font-medium">{weekLabel(next)}: {next.data.title}</span>
-        </a>
-      ) : (
-        <div class="surface-card rounded-2xl px-4 py-3 text-sm text-[#6a7785]">No next week</div>
-      )}
+    <div class="mt-3 text-center">
+      <a href="/weeks/" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-[var(--ink-soft)] transition hover:bg-white/50 hover:text-[var(--accent)]">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        All weeks
+      </a>
     </div>
   </nav>
 </BaseLayout>
