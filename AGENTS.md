@@ -27,7 +27,6 @@ Every week file must include:
 Optional fields:
 
 - `releaseDate` (YYYY-MM-DD)
-- `estimatedHours` (number)
 - `prerequisites` (string array)
 - `learningOutcomes` (string array)
 

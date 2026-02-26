@@ -33,7 +33,6 @@ title: ${title}
 summary: Add a one-line summary for this workshop.
 published: false
 releaseDate: ${releaseDate}
-estimatedHours: 2
 learningOutcomes:
   - Add outcome 1.
   - Add outcome 2.

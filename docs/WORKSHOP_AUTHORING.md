@@ -36,7 +36,6 @@ title: Functions and Problem Solving
 summary: One-line summary shown on cards and week header.
 published: false
 releaseDate: 2026-03-11
-estimatedHours: 2
 prerequisites:
   - Optional prerequisite 1
 learningOutcomes:
