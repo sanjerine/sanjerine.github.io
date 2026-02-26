@@ -240,6 +240,58 @@ a:hover {
   content: none;
 }
 
+/* Copy-to-clipboard button on code blocks */
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.45);
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
+}
+
+pre:hover .copy-btn {
+  opacity: 1;
+}
+
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.copy-btn.copied {
+  color: #4ade80;
+  opacity: 1;
+}
+
+/* Collapsible details/hint blocks */
+details.hint-block > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.hint-block > summary {
+  list-style: none;
+}
+
+details.hint-block .hint-chevron {
+  transition: transform 200ms ease;
+}
+
+details.hint-block[open] .hint-chevron {
+  transform: rotate(90deg);
+}
+
 .week-nav-link {
   border-radius: 1rem;
   border: 1px solid transparent;

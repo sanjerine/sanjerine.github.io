@@ -17,6 +17,7 @@ learningOutcomes:
 ---
 
 import Callout from "../../components/Callout.astro";
+import Details from "../../components/Details.astro";
 
 ## Workshop flow
 
@@ -176,6 +177,34 @@ When `number` becomes 0, the condition `number > 0` is false, so the loop stops.
 
 </Callout>
 
+<Details summary="Hint: powers of 2 loop structure">
+
+```python
+power = 1
+
+while power <= 256:
+    print(power)
+    power = power * 2
+```
+
+This prints `1, 2, 4, 8, 16, 32, 64, 128, 256`.
+
+</Details>
+
+<Details summary="Check your trace for 19">
+
+| Step | `number` | `number % 2` | `bits` | `number // 2` |
+| ---- | -------- | ------------- | ------ | -------------- |
+| 1 | 19 | 1 | `"1"` | 9 |
+| 2 | 9 | 1 | `"11"` | 4 |
+| 3 | 4 | 0 | `"011"` | 2 |
+| 4 | 2 | 0 | `"0011"` | 1 |
+| 5 | 1 | 1 | `"10011"` | 0 |
+
+Result: `10011`. Check with `bin(19)` which gives `0b10011`.
+
+</Details>
+
 ## Repeating with for loops
 
 A **for loop** runs code once for each item in a group. Two common groups are **strings** (text) and **ranges** (lists of numbers).
@@ -238,6 +267,21 @@ print(f"Binary: {bin(number)}")
 Rewrite the character inspector from Week 2a using f-strings. Take a character stored in a variable and print its code point, binary, and hex. Use f-strings instead of `str()` and `+`.
 
 </Callout>
+
+<Details summary="Example solution">
+
+```python
+character = "A"
+
+print(f"Character: {character}")
+print(f"Code point: {ord(character)}")
+print(f"Binary: {bin(ord(character))}")
+print(f"Hex: {hex(ord(character))}")
+```
+
+Compare this to the Week 2a version — much shorter and easier to read.
+
+</Details>
 
 ## Writing your own functions
 
@@ -331,6 +375,21 @@ print(to_binary(0))      # 0
 
 </Callout>
 
+<Details summary="Hint for the hex converter (hard mode)">
+
+The key change: divide by 16 instead of 2. The tricky part is turning remainders 10–15 into letters. One way is to use a lookup string:
+
+```python
+hex_digits = "0123456789abcdef"
+
+# Then instead of str(remainder), use:
+hex_digits[remainder]
+```
+
+So `hex_digits[10]` gives `"a"`, `hex_digits[15]` gives `"f"`, and `hex_digits[3]` gives `"3"`.
+
+</Details>
+
 ## ASCII and Unicode with loops
 
 Now that you know for loops and f-strings, you can look at a whole word instead of one character at a time.
@@ -367,6 +426,12 @@ print(message)
 3. Make your own secret message as a list of code points. Ask a classmate to decode it.
 
 </Callout>
+
+<Details summary="Decoded message">
+
+The code points `[67, 73, 84, 88, 48, 48, 48, 49]` spell **CITX0001** — your unit code!
+
+</Details>
 
 ## Two's complement with Python
 
@@ -455,6 +520,15 @@ Interpretation: `0101` means `+5` and `1011` means `-5` in 4-bit two's complemen
 4. Try `twos_complement(-9, 4)`. What message do you get, and why? (Hint: what is the 4-bit two's complement range?)
 
 </Callout>
+
+<Details summary="Expected outputs">
+
+1. `twos_complement(-2, 4)` → `1110`
+2. `6 + (-2)` in 4-bit: `twos_complement(6, 4)` = `0110`, `twos_complement(-2, 4)` = `1110`. Add them: `0110 + 1110 = 10100`. Keep last 4 bits → `0100` = 4. Correct!
+3. `twos_complement(-6, 8)` → `11111010`
+4. `twos_complement(-9, 4)` → Error message, because the 4-bit range is -8 to 7 and -9 is outside it.
+
+</Details>
 
 ## Challenge: overflow detector
 

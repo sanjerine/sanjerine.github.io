@@ -18,6 +18,7 @@ learningOutcomes:
 ---
 
 import Callout from "../../components/Callout.astro";
+import Details from "../../components/Details.astro";
 
 ## Workshop flow
 
@@ -245,6 +246,25 @@ Read the remainders from bottom to top: **1, 1, 0, 1**. So 13 in binary is `1101
 
 </Callout>
 
+<Details summary="Check your work: decimal 19 to binary">
+
+| Step | Code | Result |
+| ---- | ---- | ------ |
+| 1 | `19 % 2` | `1` (remainder) |
+| 1 | `19 // 2` | `9` (next number) |
+| 2 | `9 % 2` | `1` |
+| 2 | `9 // 2` | `4` |
+| 3 | `4 % 2` | `0` |
+| 3 | `4 // 2` | `2` |
+| 4 | `2 % 2` | `0` |
+| 4 | `2 // 2` | `1` |
+| 5 | `1 % 2` | `1` |
+| 5 | `1 // 2` | `0` (stop) |
+
+Remainders bottom to top: **1, 0, 0, 1, 1**. So 19 in binary is `10011`.
+
+</Details>
+
 ## Binary and hexadecimal in Python
 
 Python has built-in tools to convert between number systems:
@@ -277,6 +297,14 @@ print(int("ff", 16))    # 255 — reads "ff" as base 16 (hex)
 5. Pick one example from your lecture slides and check it with Python.
 
 </Callout>
+
+<Details summary="Check your answers for #2–4">
+
+- `hex(181)` gives `0xb5`
+- `0xF0A` in decimal is `3850`
+- `0b100101` in decimal is `37`
+
+</Details>
 
 ## Strings and text
 
@@ -369,6 +397,13 @@ print(chr(128522))     # 😊
 3. What is `chr(128640)`? (Hint: it is an emoji.)
 
 </Callout>
+
+<Details summary="Reveal the answers">
+
+- `chr(87)` = `W`, `chr(111)` = `o`, `chr(119)` = `w` — they spell **Wow**.
+- `chr(128640)` is a rocket: 🚀
+
+</Details>
 
 ## Putting it together
 

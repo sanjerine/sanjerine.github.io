@@ -58,6 +58,17 @@ const releaseDate = entry.data.releaseDate
       </div>
     </div>
 
+    {entry.data.prerequisites.length > 0 && (
+      <div class="relative mt-6 rounded-2xl border border-[#d1c2aa] bg-white/75 p-4">
+        <h2 class="text-base font-semibold text-[var(--ink)]">Prerequisites</h2>
+        <ul class="mt-3 space-y-1 text-sm text-[var(--ink-soft)]">
+          {entry.data.prerequisites.map((prereq) => (
+            <li class="flex gap-2"><span class="mt-1 size-1.5 rounded-full bg-[#c86030]"></span><span>{prereq}</span></li>
+          ))}
+        </ul>
+      </div>
+    )}
+
     {entry.data.learningOutcomes.length > 0 && (
       <div class="relative mt-6 rounded-2xl border border-[#d1c2aa] bg-white/75 p-4">
         <h2 class="text-base font-semibold text-[var(--ink)]">Learning outcomes</h2>
