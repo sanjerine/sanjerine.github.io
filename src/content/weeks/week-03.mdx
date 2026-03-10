@@ -1,22 +1,575 @@
 ---
 week: 3
-title: Control Flow and Program Design
-summary: Week 3 placeholder. This page will cover branching, loops, and small program design patterns.
-published: false
-releaseDate: 2026-03-04
+title: "Lists, Slicing, and a Machine Language Simulator"
+summary: "Use Python lists and string slicing to build a simple CPU simulator that runs the machine language from your lectures."
+published: true
+releaseDate: 2026-03-11
 estimatedHours: 2
+prerequisites:
+  - Completion of Week 2a and 2b workshops.
+  - Lecture topics on CPU architecture and machine language.
 learningOutcomes:
-  - Write conditional logic with if, elif, and else.
-  - Build loops that solve repeated tasks.
-  - Break problems into clear algorithmic steps.
+  - Use lists to store and update collections of values.
+  - Use string indexing and slicing to extract parts of a string.
+  - Read user input with input() and convert it to the correct type.
+  - Build a machine language simulator that executes LOAD, STORE, ADD, and HALT.
+  - Trace through machine language programs step by step.
 ---
 
-## Status
+import Callout from "../../components/Callout.astro";
+import Details from "../../components/Details.astro";
 
-This week is currently in draft and will be released before class.
+## Workshop flow
 
-## Planned structure
+This week's lecture introduced how a CPU works. You learned about registers, memory, machine language instructions, and the fetch-execute cycle. Today you will build a Python program that copies that cycle. It reads an instruction, works out what it means, does the action, and moves to the next one.
 
-- Conditional logic and boolean expressions
-- Loop patterns and common mistakes
-- Mini challenge tied to lecture examples
+1. Learn **lists** — a new way to store multiple values (like registers and memory).
+2. Learn **string indexing and slicing** — picking out specific characters from text (like the parts of an instruction).
+3. Learn **input()** — getting data from the user.
+4. Build a **machine language simulator** that runs programs from your lectures.
+5. Trace programs and verify your lecture exercises with real code.
+
+<Callout tone="info" title="Key words in simple English">
+
+- **register**: a small storage place inside the CPU
+- **memory cell**: one storage place in memory
+- **instruction**: a command for the CPU
+- **opcode**: the part of the instruction that says what action to do
+- **program counter (PC)**: the memory address of the next instruction
+
+</Callout>
+
+<Callout tone="info" title="What you already know from Weeks 2a and 2b">
+
+`print()`, variables, types (`int`, `str`, `float`, `bool`), maths (`+`, `-`, `*`, `/`, `//`, `%`, `**`), `bin()`, `hex()`, `int()`, `ord()`, `chr()`, `str()`, `len()`, comparisons, `if`/`elif`/`else`, `while` loops, `for` loops, `range()`, f-strings, and functions with `def` and `return`.
+
+</Callout>
+
+<Callout tone="exercise" title="Warm-up">
+
+1. Write a function that takes a hex string like `"1A"` and returns its decimal value. (Hint: you already know `int("1A", 16)`.)
+2. What does `bin(0x2F)` give? Predict first, then check.
+3. If a machine has 256 memory cells, what range of addresses is that in hex? (Hint: start at `00`.)
+
+</Callout>
+
+<Details summary="Warm-up answers">
+
+1. `def hex_to_dec(h): return int(h, 16)` — calling `hex_to_dec("1A")` returns `26`.
+2. `bin(0x2F)` gives `'0b101111'` (which is 47 in decimal).
+3. Addresses `00` to `FF` (0 to 255 in decimal). That is 256 cells.
+
+</Details>
+
+## Lists
+
+So far you have worked with single values: one number, one string, one boolean. But what if you need to store many values together? A **list** lets you keep multiple values in one variable. Each value sits in a numbered slot, like a row of boxes.
+
+### Creating a list
+
+```python
+scores = [90, 85, 72, 95]
+print(scores)
+```
+
+The square brackets `[]` make a list. Each value inside is separated by a comma.
+
+### Accessing items by index
+
+Each item in a list has a position number called an **index**. Indices start at **0**, not 1.
+
+```python
+scores = [90, 85, 72, 95]
+print(scores[0])   # 90 (first item)
+print(scores[1])   # 85 (second item)
+print(scores[3])   # 95 (fourth item)
+```
+
+This is just like memory addresses in your lectures — they start at 0 too.
+
+### Changing items
+
+You can change a value by using its index with `=`:
+
+```python
+scores = [90, 85, 72, 95]
+scores[2] = 100
+print(scores)   # [90, 85, 100, 95]
+```
+
+### Creating a list of a specific size
+
+A CPU has a set of registers and memory cells. We can represent these in Python as lists filled with zeros:
+
+```python
+registers = [0] * 16    # 16 registers, all starting at 0
+memory = [0] * 256       # 256 memory cells, all starting at 0
+print(len(registers))    # 16
+print(len(memory))       # 256
+```
+
+`[0] * 16` creates a list of 16 zeros. `len()` tells you how many items are in the list (you already used `len()` on strings in Week 2a — it works on lists too).
+
+### Looping through a list
+
+You can use a `for` loop to go through every item:
+
+```python
+registers = [0, 0, 42, 0]
+
+for value in registers:
+    print(value)
+```
+
+If you also need the index (the position number), use `range(len(...))`:
+
+```python
+registers = [0, 0, 42, 0]
+
+for i in range(len(registers)):
+    print(f"Register {i}: {registers[i]}")
+```
+
+This prints:
+
+```
+Register 0: 0
+Register 1: 0
+Register 2: 42
+Register 3: 0
+```
+
+<Callout tone="exercise" title="List practice">
+
+1. Create a list called `registers` with 16 zeros. Print its length.
+2. Set register 3 to `99` and register 15 to `255`. Print the whole list.
+3. Use a for loop to print each register with its number (e.g. `Register 0: 0`, `Register 3: 99`).
+4. Create a list called `memory` with 256 zeros. Set `memory[0]` to `42` and `memory[255]` to `17`. Print both values.
+
+</Callout>
+
+<Details summary="Hint for exercise 3">
+
+```python
+for i in range(len(registers)):
+    print(f"Register {i}: {registers[i]}")
+```
+
+</Details>
+
+## String indexing and slicing
+
+You already know that strings are pieces of text. So far, you have used whole strings (like `"Hello"`). But you can also pick out one character at a time, or grab a section of the string. This is called **indexing** and **slicing**.
+
+### Accessing a single character
+
+Just like lists, strings use square brackets and indices starting at 0:
+
+```python
+instruction = "15A0"
+print(instruction[0])   # "1"
+print(instruction[1])   # "5"
+print(instruction[2])   # "A"
+print(instruction[3])   # "0"
+```
+
+<Callout tone="info" title="Lecture connection">
+
+In the machine language from your lectures, each instruction is a 4-digit hex code. The first digit is the **opcode**. It tells the CPU what to do, such as load, store, or add. The other digits are the **operands**. They tell the CPU what data to use. String indexing lets us split an instruction into these parts.
+
+</Callout>
+
+### Slicing: getting a range of characters
+
+A **slice** gives you a section of a string. You write `[start:end]`. Python includes the character at `start` but stops **before** `end`:
+
+```python
+instruction = "15A0"
+opcode = instruction[0]       # "1"
+operand = instruction[1:]     # "5A0" (from index 1 to the end)
+register = instruction[1]     # "5"
+address = instruction[2:4]    # "A0" (indices 2 and 3)
+print(f"Opcode: {opcode}, Register: {register}, Address: {address}")
+```
+
+`instruction[1:]` means "from index 1 to the end". `instruction[2:4]` means "from index 2 up to (but not including) index 4".
+
+### Turning hex characters into numbers
+
+Once you slice out part of a hex string, you can turn it into a number with `int(..., 16)` (you learned this in Week 2a):
+
+```python
+instruction = "15A0"
+register_number = int(instruction[1], 16)     # 5
+memory_address = int(instruction[2:4], 16)    # 160
+print(f"Register: {register_number}, Address: {memory_address}")
+```
+
+This is how we will read machine language instructions in the simulator later.
+
+<Callout tone="exercise" title="Parsing practice">
+
+1. Given `instruction = "35F1"`, extract the opcode and the three operand characters. What is each one?
+2. Given `instruction = "2ABC"`, extract the register number (second hex digit) as a decimal integer.
+3. Given `instruction = "14FF"`, what memory address does it refer to? Convert the last two hex digits to a decimal number.
+
+</Callout>
+
+<Details summary="Check your answers">
+
+1. `instruction = "35F1"`: opcode is `"3"`, operands are `"5"`, `"F"`, `"1"`.
+2. `int("A", 16)` = 10. Register 10 (also called register A in hex).
+3. `int("FF", 16)` = 255. The instruction refers to memory address 255.
+
+</Details>
+
+## Getting user input
+
+`input()` lets your program ask the user to type something. It always gives back a **string**.
+
+```python
+name = input("What is your name? ")
+print(f"Hello, {name}!")
+```
+
+If you want a number, you need to convert the string:
+
+```python
+number = int(input("Enter a number: "))
+print(f"Double: {number * 2}")
+```
+
+Without `int()`, the result of `input()` is text, and you cannot do maths with text.
+
+<Callout tone="exercise" title="Input practice">
+
+1. Ask the user for a hex string and convert it to decimal. Print the result.
+2. Ask the user for a decimal number and print it in binary.
+3. Ask the user for a single character and print its ASCII code point.
+
+</Callout>
+
+<Details summary="Example solutions">
+
+```python
+# Exercise 1
+h = input("Enter a hex string: ")
+print(f"Decimal: {int(h, 16)}")
+
+# Exercise 2
+n = int(input("Enter a decimal number: "))
+print(f"Binary: {bin(n)}")
+
+# Exercise 3
+c = input("Enter a character: ")
+print(f"Code point of '{c}': {ord(c)}")
+```
+
+</Details>
+
+## Building the simulator
+
+Now we put everything together. We will build a Python program that works like the CPU from your lectures. It has 16 registers, 256 memory cells, and a loop that fetches, decodes, and executes one instruction at a time.
+
+<Callout tone="info" title="Lecture connection">
+
+The machine language from your lectures has:
+- **16 registers** (numbered 0 to F). Each one can hold a value from 0 to 255.
+- **256 memory cells** (addressed 00 to FF). Each one holds one byte (a value from 0 to 255).
+- **Instructions** that are 4 hex digits long. Each instruction is stored in two memory cells next to each other.
+- A **Program Counter (PC)** that keeps track of where the next instruction is in memory.
+
+Our simulator will do the same thing the CPU does: fetch the next instruction, decode it (work out what it means), execute it (do it), and repeat.
+
+</Callout>
+
+### Step 1: set up memory and registers
+
+```python
+memory = [0] * 256      # 256 memory cells
+registers = [0] * 16    # 16 registers
+```
+
+Two lists. That is all the CPU's storage.
+
+### Step 2: load a program into memory
+
+A program is a list of 4-digit hex strings like `["2105", "C000"]`. Each instruction takes up two memory cells. The first two hex digits go into one cell, and the last two go into the next cell.
+
+```python
+def load_program(memory, program):
+    address = 0
+    for instruction in program:
+        memory[address] = int(instruction[0:2], 16)
+        memory[address + 1] = int(instruction[2:4], 16)
+        address = address + 2
+```
+
+Here is what each line does:
+
+- **Line 1:** We define a function that takes the memory list and a list of instruction strings.
+- **Line 2:** We start loading at address 0.
+- **Line 3:** We loop through each instruction in the program.
+- **Line 4:** `instruction[0:2]` gets the first two hex digits. `int(..., 16)` converts them to a number. We store that number in the current memory cell.
+- **Line 5:** `instruction[2:4]` gets the last two hex digits. We store them in the next memory cell.
+- **Line 6:** We move forward by 2 addresses for the next instruction.
+
+### Step 3: the fetch-decode-execute cycle
+
+This is the core of the simulator. It is the same cycle from your lectures, written in Python.
+
+```python
+def run(memory, registers):
+    pc = 0
+    halted = False
+
+    while halted == False:
+        # FETCH
+        byte1 = memory[pc]
+        byte2 = memory[pc + 1]
+        instruction = f"{byte1:02X}{byte2:02X}"
+        pc = pc + 2
+
+        # DECODE
+        opcode = instruction[0]
+        r = int(instruction[1], 16)
+        xy = int(instruction[2:4], 16)
+
+        # EXECUTE
+        if opcode == "1":
+            # LOAD from memory: copy a value from memory into a register
+            registers[r] = memory[xy]
+            print(f"LOAD  R{r:X} = memory[{xy:02X}] (value: {registers[r]})")
+
+        elif opcode == "2":
+            # LOAD immediate: put the number xy directly into a register
+            # ("immediate" means the value is inside the instruction itself)
+            registers[r] = xy
+            print(f"LOAD  R{r:X} = {xy}")
+
+        elif opcode == "3":
+            # STORE: copy a value from a register into memory
+            memory[xy] = registers[r]
+            print(f"STORE memory[{xy:02X}] = R{r:X} (value: {registers[r]})")
+
+        elif opcode == "5":
+            # ADD: add two registers and put the result in another register
+            s = int(instruction[2], 16)
+            t = int(instruction[3], 16)
+            registers[r] = (registers[s] + registers[t]) % 256
+            print(f"ADD   R{r:X} = R{s:X} + R{t:X} (value: {registers[r]})")
+
+        elif opcode == "C":
+            print("HALT")
+            halted = True
+
+        else:
+            print(f"Unknown opcode: {opcode}")
+            halted = True
+```
+
+Here is what each part does:
+
+- **FETCH:** Read two bytes from memory at the current PC position. Join them into one 4-digit hex string. The `:02X` part means "show this number as 2 uppercase hex digits". If needed, Python adds a zero at the front, so `5` becomes `05`. Then move PC forward by 2.
+- **DECODE:** Break the instruction into parts using string indexing and slicing. `instruction[0]` is the opcode. `instruction[1]` is the register number. `instruction[2:4]` is the operand.
+- **EXECUTE:** Use `if/elif` to check the opcode. Then do the matching action with the registers and memory lists.
+
+The ADD instruction uses `% 256` to keep the result between 0 and 255. If the sum goes above 255, it wraps around back to 0. This is how real hardware works — you learned about this as **overflow** in Week 2b.
+
+### Step 4: run a program
+
+Let's test with a simple program: load 5 into register 1, load 3 into register 2, add them into register 3, then halt.
+
+```python
+program = ["2105", "2203", "5312", "C000"]
+
+memory = [0] * 256
+registers = [0] * 16
+
+load_program(memory, program)
+run(memory, registers)
+
+print(f"Registers: {registers}")
+```
+
+When you run this, you should see:
+
+```
+LOAD  R1 = 5
+LOAD  R2 = 3
+ADD   R3 = R1 + R2 (value: 8)
+HALT
+
+Registers: [0, 5, 3, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+```
+
+Register 3 holds 8, which is 5 + 3. Your simulator just did exactly what the CPU does.
+
+<Callout tone="exercise" title="Build and run">
+
+1. Type in the simulator code above and run it. Verify that register 3 ends up as 8.
+2. Modify the program to load 10 and 20, add them, and **store** the result to memory cell FF. Print `memory[0xFF]` after running. (Hint: you need a `"3"` opcode instruction.)
+3. Add a print statement at the very start of the while loop that shows the PC and the instruction about to be executed. This gives you a "trace" view like the lecture worksheets.
+
+</Callout>
+
+<Details summary="Hint for exercise 2">
+
+```python
+program = ["210A", "2214", "5312", "33FF", "C000"]
+
+memory = [0] * 256
+registers = [0] * 16
+
+load_program(memory, program)
+run(memory, registers)
+
+print(f"memory[0xFF] = {memory[0xFF]}")
+```
+
+After running, `memory[0xFF]` should be 30 (10 + 20).
+
+</Details>
+
+<Details summary="Hint for exercise 3">
+
+Add this line right after the `# FETCH` comment, before reading the bytes:
+
+```python
+print(f"[PC={pc:02X}] about to execute {memory[pc]:02X}{memory[pc + 1]:02X}")
+```
+
+This will show both the program counter and the 4-digit instruction before each step executes.
+
+</Details>
+
+## Program tracing
+
+In your lectures, you traced through programs by hand. You wrote down each step: the PC, the instruction, and the changes in registers and memory. Now you can run the same program in your simulator and check your paper trace.
+
+<Callout tone="exercise" title="Trace challenge">
+
+Here is a program loaded at address 00:
+
+```python
+program = ["156C", "166D", "5056", "306E", "C000"]
+```
+
+Before running the program, put some data into memory:
+
+```python
+memory[0x6C] = 7
+memory[0x6D] = 3
+```
+
+1. **Before running it**, trace through on paper. For each step, write down: the PC, the instruction, what happens, and the register values after.
+2. What value ends up in register 0? What value is stored at memory address 6E?
+3. Run it in the simulator and check your answers.
+
+</Callout>
+
+<Details summary="Trace solution">
+
+| Step | PC (before) | Instruction | Action | Result |
+| ---- | ----------- | ----------- | ------ | ------ |
+| 1 | 00 | `156C` | Load from address 6C into R5 | R5 = 7 |
+| 2 | 02 | `166D` | Load from address 6D into R6 | R6 = 3 |
+| 3 | 04 | `5056` | Add R5 + R6, put result in R0 | R0 = 10 |
+| 4 | 06 | `306E` | Store R0 into address 6E | Address 6E = 10 |
+| 5 | 08 | `C000` | Halt | Program stops |
+
+Register 0 holds **10** (because 7 + 3 = 10). Memory address 6E also holds **10** (it was stored there in step 4). This is the same program trace from the lecture slides.
+
+To run it:
+
+```python
+program = ["156C", "166D", "5056", "306E", "C000"]
+
+memory = [0] * 256
+registers = [0] * 16
+
+memory[0x6C] = 7
+memory[0x6D] = 3
+
+load_program(memory, program)
+run(memory, registers)
+
+print(f"R0 = {registers[0]}")
+print(f"memory[0x6E] = {memory[0x6E]}")
+```
+
+</Details>
+
+## Challenges
+
+<Callout tone="challenge" title="Extension ideas">
+
+Pick one or more of these to try if you finish early.
+
+**1. Add bitwise instructions**
+
+Implement AND (opcode `8`), OR (opcode `7`), and XOR (opcode `9`). These operators are new, so use the examples below as a guide:
+
+- `&` is AND: `0b1100 & 0b1010` gives `0b1000`
+- `|` is OR: `0b1100 | 0b1010` gives `0b1110`
+- `^` is XOR: `0b1100 ^ 0b1010` gives `0b0110`
+
+Each instruction works the same way as ADD: take two registers, do the operation, and put the result in a third register.
+
+**2. Add JUMP**
+
+Implement JUMP (opcode `B`): if register `r` equals register 0, set PC to `xy`. Otherwise, do nothing. This lets a program skip to a different address.
+
+Try writing a program that loads the same value into `R0` and `R1`, then uses JUMP to skip over a STORE instruction.
+
+**3. Use a dictionary instead of if/elif**
+
+You have not learned dictionaries yet. This is just a preview of Week 4. A **dictionary** is another Python data structure. It maps a **key** to a **value** (like a real dictionary maps a word to its definition). You can use one to replace the long `if/elif` chain:
+
+```python
+opcodes = {
+    "1": "LOAD from memory",
+    "2": "LOAD immediate",
+    "3": "STORE",
+    "5": "ADD",
+    "C": "HALT",
+}
+print(opcodes["1"])   # "LOAD from memory"
+```
+
+You can even store functions as dictionary values instead of strings. This is a more advanced pattern — try it if you want a preview of what is coming in future weeks.
+
+**4. Interactive mode**
+
+Use `input()` to let the user type hex instructions one at a time. After each instruction executes, print the registers and ask for the next one. Type `"quit"` to stop.
+
+**5. Pretty-print registers**
+
+Write a function that displays all 16 registers in a 4x4 grid, showing both hex and decimal values:
+
+```
+R0=00 (  0)  R1=05 (  5)  R2=03 (  3)  R3=08 (  8)
+R4=00 (  0)  R5=00 (  0)  R6=00 (  0)  R7=00 (  0)
+R8=00 (  0)  R9=00 (  0)  RA=00 (  0)  RB=00 (  0)
+RC=00 (  0)  RD=00 (  0)  RE=00 (  0)  RF=00 (  0)
+```
+
+</Callout>
+
+## What comes next
+
+Today you learned how to:
+
+- Store multiple values in **lists** and access them by index.
+- Use **string indexing and slicing** to extract parts of a string.
+- Read user input with **input()** and convert it to the right type.
+- Build a **machine language simulator** with fetch, decode, and execute.
+- **Trace programs** step by step and verify them with code.
+
+You built a working CPU in Python. The same ideas — lists for storage, string slicing for reading data, and loops for repeating steps — come up everywhere in programming. Keep practising.
+
+### Practice resources
+
+- [Google Colab](https://colab.research.google.com) — where you write and run code.
+- [Python Tutor](https://pythontutor.com) — see what your code does step by step.
+- [W3Schools Python](https://www.w3schools.com/python/) — short lessons on every Python topic.

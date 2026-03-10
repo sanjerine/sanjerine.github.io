@@ -1,0 +1,605 @@
+---
+week: 4
+title: "Dictionaries, String Methods, and a Process Scheduler"
+summary: "Learn Python dictionaries and string methods, then use them to build a round-robin process scheduler from your OS lectures."
+published: true
+releaseDate: 2026-03-18
+estimatedHours: 2
+prerequisites:
+  - Completion of Weeks 2a, 2b, and 3 workshops.
+  - Lecture topics on operating systems, processes, and scheduling.
+learningOutcomes:
+  - Create and manipulate dictionaries to store key-value pairs.
+  - Use string methods to split, join, clean, and check text.
+  - Model operating system concepts using Python data structures.
+  - Build a round-robin process scheduler that simulates time slicing and context switching.
+  - Trace through scheduling steps and connect them to lecture concepts.
+---
+
+import Callout from "../../components/Callout.astro";
+import Details from "../../components/Details.astro";
+
+## Workshop flow
+
+This week's lecture introduced operating systems. You learned what they do, how they manage processes, and how the scheduler and dispatcher share the CPU. Today you will build a Python program that copies that idea. It keeps track of processes, gives each one a time slice, and switches between them.
+
+1. Learn **dictionaries** — a new data structure that maps keys to values (like a process ID to its state).
+2. Learn **string methods** — tools for splitting, joining, and cleaning text.
+3. Build a **process table** using dictionaries.
+4. Build a **round-robin process scheduler** that simulates the dispatcher from your lectures.
+5. Trace through scheduling steps and see context switching in action.
+
+<Callout tone="info" title="Key words in simple English">
+
+- **scheduler**: decides which process should run next
+- **dispatcher**: gives the CPU to the chosen process
+- **time slice**: a short amount of CPU time
+- **context switch**: changing from one process to another
+
+</Callout>
+
+<Callout tone="info" title="What you already know from Weeks 2a, 2b, and 3">
+
+`print()`, variables, types (`int`, `str`, `float`, `bool`), maths (`+`, `-`, `*`, `/`, `//`, `%`, `**`), `bin()`, `hex()`, `int()`, `ord()`, `chr()`, `str()`, `len()`, comparisons, `if`/`elif`/`else`, `while` loops, `for` loops, `range()`, f-strings, functions with `def` and `return`, lists (creating, indexing, changing, looping), string indexing and slicing, and `input()`.
+
+</Callout>
+
+<Callout tone="exercise" title="Warm-up">
+
+1. Create a list of 4 strings: `["ready", "waiting", "ready", "running"]`. Use a for loop to print each one with its index (e.g. `Process 0: ready`).
+2. Given `info = "P3:ready:5"`, use string indexing to get the character at index 0. What is it?
+3. Write a function called `is_ready` that takes a string like `"ready"` or `"waiting"` and returns `True` if it equals `"ready"`, `False` otherwise.
+
+</Callout>
+
+<Details summary="Warm-up answers">
+
+```python
+# Exercise 1
+states = ["ready", "waiting", "ready", "running"]
+for i in range(len(states)):
+    print(f"Process {i}: {states[i]}")
+
+# Exercise 2
+info = "P3:ready:5"
+print(info[0])   # "P"
+
+# Exercise 3
+def is_ready(state):
+    return state == "ready"
+
+print(is_ready("ready"))     # True
+print(is_ready("waiting"))   # False
+```
+
+</Details>
+
+## Dictionaries
+
+A **list** stores values in numbered slots (index 0, 1, 2, ...). Sometimes that is not the best choice. Sometimes you want to look up a value by a **name** instead of a number. A **dictionary** stores **key-value pairs**. Each value has a meaningful label.
+
+Think of it like a real dictionary: you look up a **word** (the key) and get its **definition** (the value).
+
+### Creating a dictionary
+
+```python
+process = {"pid": 1, "state": "ready", "priority": 3}
+print(process)
+```
+
+Curly braces `{}` make a dictionary. Inside, each entry is written as `key: value`, separated by commas.
+
+Here, `"pid"`, `"state"`, and `"priority"` are the **keys**. `1`, `"ready"`, and `3` are the **values**.
+
+### Accessing values
+
+Use square brackets with the **key** (not a number):
+
+```python
+process = {"pid": 1, "state": "ready", "priority": 3}
+print(process["pid"])        # 1
+print(process["state"])      # "ready"
+print(process["priority"])   # 3
+```
+
+This is different from lists, where you use a number like `my_list[0]`. With dictionaries, you use the key name.
+
+### Changing and adding values
+
+Change a value by assigning to its key. Add a new key-value pair the same way:
+
+```python
+process = {"pid": 1, "state": "ready", "priority": 3}
+
+# Change an existing value
+process["state"] = "running"
+print(process["state"])   # "running"
+
+# Add a new key-value pair
+process["time_left"] = 10
+print(process)
+```
+
+If the key already exists, its value is updated. If it does not exist, a new entry is created.
+
+### Checking if a key exists
+
+Use `in` to check if a key is in the dictionary:
+
+```python
+process = {"pid": 1, "state": "ready"}
+
+print("pid" in process)       # True
+print("priority" in process)  # False
+```
+
+This is useful when you are not sure if a key has been added yet.
+
+### Looping through a dictionary
+
+You can loop through keys, values, or both:
+
+```python
+process = {"pid": 1, "state": "ready", "priority": 3}
+
+# Loop through keys
+for key in process:
+    print(key)
+
+# Loop through values
+for value in process.values():
+    print(value)
+
+# Loop through both keys and values
+for key, value in process.items():
+    print(f"{key}: {value}")
+```
+
+The `.items()` method gives you both the key and the value on each step of the loop. This is the one you will use most often.
+
+<Callout tone="info" title="Lecture connection">
+
+In your OS lecture, the **process table** is a list that the scheduler maintains. Each entry tracks a process: its ID, its state (ready, waiting, or running), its priority, and how much memory it uses. A dictionary is a natural way to represent one process table entry in Python.
+
+</Callout>
+
+<Callout tone="exercise" title="Dictionary practice">
+
+1. Create a dictionary called `process_a` with keys `"pid"` (value `101`), `"state"` (value `"ready"`), and `"priority"` (value `2`). Print it.
+2. Change the state of `process_a` to `"running"`. Print the new state.
+3. Add a key called `"memory"` with value `512`. Print the whole dictionary.
+4. Use a for loop with `.items()` to print each key and value on its own line.
+5. Check if `"memory"` is in the dictionary using `in`. Then check if `"cpu_time"` is in it.
+
+</Callout>
+
+<Details summary="Check your answers">
+
+```python
+# Exercise 1
+process_a = {"pid": 101, "state": "ready", "priority": 2}
+print(process_a)
+
+# Exercise 2
+process_a["state"] = "running"
+print(process_a["state"])   # "running"
+
+# Exercise 3
+process_a["memory"] = 512
+print(process_a)
+
+# Exercise 4
+for key, value in process_a.items():
+    print(f"{key}: {value}")
+
+# Exercise 5
+print("memory" in process_a)     # True
+print("cpu_time" in process_a)   # False
+```
+
+</Details>
+
+## Lists of dictionaries
+
+You can combine lists and dictionaries to represent a collection of structured data. A **list of dictionaries** is like a table. Each dictionary is one row.
+
+```python
+process_table = [
+    {"pid": 1, "state": "ready", "priority": 3},
+    {"pid": 2, "state": "waiting", "priority": 1},
+    {"pid": 3, "state": "ready", "priority": 2},
+]
+
+# Access the second process
+print(process_table[1])
+
+# Access the state of the second process
+print(process_table[1]["state"])   # "waiting"
+```
+
+You use a number index to pick the dictionary from the list, then a key to pick the value from that dictionary.
+
+### Looping through a list of dictionaries
+
+```python
+for process in process_table:
+    print(f"PID {process['pid']}: {process['state']} (priority {process['priority']})")
+```
+
+This prints:
+
+```
+PID 1: ready (priority 3)
+PID 2: waiting (priority 1)
+PID 3: ready (priority 2)
+```
+
+<Callout tone="exercise" title="Process table exercise">
+
+1. Create a `process_table` list with 4 process dictionaries. Each should have `"pid"`, `"state"`, and `"priority"`. Make at least one process `"waiting"` and the rest `"ready"`.
+2. Write a for loop that prints only the processes whose state is `"ready"`.
+3. Write a function called `count_ready` that takes a process table and returns how many processes have state `"ready"`.
+
+</Callout>
+
+<Details summary="Check your answers">
+
+```python
+process_table = [
+    {"pid": 1, "state": "ready", "priority": 2},
+    {"pid": 2, "state": "waiting", "priority": 1},
+    {"pid": 3, "state": "ready", "priority": 3},
+    {"pid": 4, "state": "ready", "priority": 1},
+]
+
+# Exercise 2
+for process in process_table:
+    if process["state"] == "ready":
+        print(f"PID {process['pid']}: {process['state']}")
+
+# Exercise 3
+def count_ready(table):
+    count = 0
+    for process in table:
+        if process["state"] == "ready":
+            count = count + 1
+    return count
+
+print(f"Ready processes: {count_ready(process_table)}")   # 3
+```
+
+</Details>
+
+### One new list tool: `.append()`
+
+Sometimes you start with an empty list and add items one by one. Use `.append()` to put one new item at the end of the list.
+
+```python
+ready = []
+ready.append("P1")
+ready.append("P2")
+print(ready)   # ["P1", "P2"]
+```
+
+We will use `.append()` later to build a list of ready processes.
+
+## String methods
+
+You already know how to index and slice strings (e.g. `text[0]`, `text[2:5]`). Now you will learn **string methods**. These are built-in tools that change a string or check it. You call them with a dot after the string.
+
+### Splitting a string
+
+`.split()` breaks a string into a **list** of smaller strings. By default, it splits on spaces:
+
+```python
+command = "LOAD R3 42"
+parts = command.split()
+print(parts)   # ["LOAD", "R3", "42"]
+```
+
+You can also split on a specific character:
+
+```python
+info = "P3:ready:5"
+parts = info.split(":")
+print(parts)   # ["P3", "ready", "5"]
+```
+
+This is useful for parsing structured text — like reading process information or commands.
+
+### Joining a list into a string
+
+`.join()` is the opposite of `.split()`. It takes a list of strings and joins them together with a separator:
+
+```python
+parts = ["PID", "1", "ready"]
+result = " | ".join(parts)
+print(result)   # "PID | 1 | ready"
+```
+
+The separator goes **before** the dot. Each item in the list is placed between copies of the separator. The list should contain strings.
+
+### Cleaning strings
+
+`.strip()` removes spaces (and newlines) from the start and end of a string:
+
+```python
+messy = "   hello   "
+clean = messy.strip()
+print(clean)       # "hello"
+print(len(messy))  # 11
+print(len(clean))  # 5
+```
+
+This is useful when reading user input, because people sometimes type extra spaces.
+
+### Changing case
+
+`.upper()` and `.lower()` convert a string to all uppercase or all lowercase:
+
+```python
+state = "Ready"
+print(state.upper())   # "READY"
+print(state.lower())   # "ready"
+```
+
+### Checking the start of a string
+
+`.startswith()` returns `True` if a string begins with a given prefix:
+
+```python
+command = "LOAD R3 42"
+print(command.startswith("LOAD"))    # True
+print(command.startswith("STORE"))   # False
+```
+
+### Replacing text
+
+`.replace()` swaps every occurrence of one piece of text with another:
+
+```python
+status = "state:waiting"
+updated = status.replace("waiting", "ready")
+print(updated)   # "state:ready"
+```
+
+<Callout tone="exercise" title="String method practice">
+
+1. Split `"firefox:running:high"` on `":"` and print the resulting list.
+2. Join `["R0", "R1", "R2", "R3"]` with `", "` as the separator.
+3. Clean up `"   HALT   "` using `.strip()`, then convert it to lowercase.
+4. Check if `"STORE R2 FF"` starts with `"STORE"`.
+5. Take `"PID 5 state waiting"` and replace `"waiting"` with `"ready"`.
+
+</Callout>
+
+<Details summary="Check your answers">
+
+```python
+# Exercise 1
+parts = "firefox:running:high".split(":")
+print(parts)   # ["firefox", "running", "high"]
+
+# Exercise 2
+registers = ["R0", "R1", "R2", "R3"]
+print(", ".join(registers))   # "R0, R1, R2, R3"
+
+# Exercise 3
+command = "   HALT   ".strip().lower()
+print(command)   # "halt"
+
+# Exercise 4
+print("STORE R2 FF".startswith("STORE"))   # True
+
+# Exercise 5
+info = "PID 5 state waiting"
+print(info.replace("waiting", "ready"))   # "PID 5 state ready"
+```
+
+</Details>
+
+## Building a process scheduler
+
+Now let's put dictionaries, lists, and string methods together to build a **round-robin process scheduler**. This copies the idea from your OS lecture. The dispatcher gives each ready process a time slice, runs it for a short time, then switches to the next one.
+
+<Callout tone="info" title="Lecture connection">
+
+From your OS lecture:
+
+- The **scheduler** maintains a process table — a list of all current processes with their states and priorities.
+- The **dispatcher** picks a ready process, gives it a short burst of CPU time (a **time slice**), then saves its state and picks the next ready process. This is called **context switching**.
+- In **round-robin** scheduling, the dispatcher cycles through all ready processes in order, giving each the same time slice. This is fair — every process gets equal CPU time.
+
+Our simulator will model this cycle step by step.
+
+</Callout>
+
+### Step 1: define processes
+
+Each process is a dictionary with a PID, a state, and a `time_needed` value (how many more time units it needs to finish).
+
+```python
+def create_process(pid, time_needed):
+    return {
+        "pid": pid,
+        "state": "ready",
+        "time_needed": time_needed,
+    }
+```
+
+### Step 2: set up the process table
+
+```python
+process_table = [
+    create_process(1, 4),
+    create_process(2, 3),
+    create_process(3, 5),
+]
+```
+
+This creates three processes. Process 1 needs 4 time units, process 2 needs 3, and process 3 needs 5.
+
+### Step 3: display the process table
+
+Let's write a helper to show the state of all processes:
+
+```python
+def show_table(process_table):
+    print(f"{'PID':<6}{'State':<12}{'Time left':<10}")
+    print("-" * 28)
+    for p in process_table:
+        print(f"{p['pid']:<6}{p['state']:<12}{p['time_needed']:<10}")
+    print()
+```
+
+The final `print()` makes a blank line after the table. The `:<6` in the f-string means "left-align and use at least 6 characters of space". This lines up the columns neatly.
+
+### Step 4: the dispatcher (round-robin loop)
+
+This is the core of the simulator. The dispatcher repeats these steps:
+
+1. Find all ready processes.
+2. If none are left, stop.
+3. Pick the next one in order.
+4. Set its state to `"running"` and give it one time slice.
+5. Reduce its `time_needed` by the time slice amount.
+6. If it has finished (time_needed reaches 0), set its state to `"finished"`. Otherwise, set it back to `"ready"`.
+
+```python
+def run_scheduler(process_table, time_slice):
+    tick = 0
+
+    while True:
+        # Find all ready processes
+        ready = []
+        for p in process_table:
+            if p["state"] == "ready":
+                ready.append(p)
+
+        # If no processes are ready, we are done
+        if len(ready) == 0:
+            print("All processes finished.")
+            break
+
+        # Pick the next ready process
+        current = ready[tick % len(ready)]
+
+        # Context switch: set it to running
+        current["state"] = "running"
+        print(f"Tick {tick}: Running PID {current['pid']} (time left: {current['time_needed']})")
+
+        # Use the time slice
+        current["time_needed"] = current["time_needed"] - time_slice
+
+        # Check if the process is done
+        if current["time_needed"] <= 0:
+            current["time_needed"] = 0
+            current["state"] = "finished"
+            print(f"         PID {current['pid']} finished!")
+        else:
+            current["state"] = "ready"
+
+        show_table(process_table)
+        tick = tick + 1
+```
+
+Here is what each part does:
+
+- **Ready list:** We loop through the process table and collect every process whose state is `"ready"`. This is the pool the dispatcher picks from.
+- **Stopping condition:** If the ready list is empty, all processes have finished.
+- **Round-robin selection:** `tick % len(ready)` cycles through the ready list. The `%` (modulo) operator wraps around: if there are 3 ready processes, `tick % 3` gives 0, 1, 2, 0, 1, 2, ...
+- **Context switch:** We change the process state to `"running"`, simulate work by reducing `time_needed`, then decide if it is finished or should go back to `"ready"`. If a process finishes, we set `time_needed` to `0` so the table does not show negative time left.
+
+### Step 5: run it
+
+```python
+process_table = [
+    create_process(1, 4),
+    create_process(2, 3),
+    create_process(3, 5),
+]
+
+print("Initial state:")
+show_table(process_table)
+
+run_scheduler(process_table, time_slice=2)
+```
+
+When you run this, you will see the dispatcher move through the processes in order. Each one gets a time slice of 2. When a process runs out of time, it is marked as finished.
+
+<Callout tone="exercise" title="Build and run the scheduler">
+
+1. Type in all the code above (the `create_process`, `show_table`, and `run_scheduler` functions) and run it. Watch the output and follow the context switches.
+2. Change `time_slice` to `1`. How does the output change? Do the processes take more or fewer ticks to finish?
+3. Add a fourth process with PID 4 that needs 2 time units. Run the scheduler again.
+4. Modify `show_table` to also show the total number of ready and finished processes at the bottom. (Hint: count them in a loop, like the `count_ready` function you wrote earlier.)
+
+</Callout>
+
+<Details summary="Hint for exercise 4">
+
+Add these lines at the end of the `show_table` function, before the final `print()`:
+
+```python
+ready_count = 0
+finished_count = 0
+for p in process_table:
+    if p["state"] == "ready":
+        ready_count = ready_count + 1
+    elif p["state"] == "finished":
+        finished_count = finished_count + 1
+print(f"Ready: {ready_count}  Finished: {finished_count}")
+```
+
+</Details>
+
+## Challenges
+
+<Callout tone="challenge" title="Extension ideas">
+
+Pick one or more of these to try if you finish early.
+
+**1. Priority scheduling**
+
+Modify the scheduler so that instead of round-robin, it always picks the ready process with the **highest priority**. Add a `"priority"` key to each process dictionary (higher number = higher priority). In the dispatcher, instead of cycling with `tick % len(ready)`, find the process in the ready list with the highest priority.
+
+**2. Simulate semaphores**
+
+Add a shared resource (like a printer). Use a variable `semaphore = 1` to track if it is available. When a process "uses" the resource, set the semaphore to 0. When it finishes, set it back to 1. If a process tries to use the resource but the semaphore is 0, set that process to `"waiting"` instead of `"running"`.
+
+**3. Deadlock detection**
+
+Create two resources and two processes. Process A holds resource 1 and wants resource 2. Process B holds resource 2 and wants resource 1. Write code that detects this deadlock — neither process can continue because each is waiting for the other.
+
+**4. User input mode**
+
+Use `input()` to let the user add processes interactively. Ask for a PID and time needed, create the process, add it to the table, and then run the scheduler. Use `.strip()` to clean up the input and `int()` to convert numbers.
+
+**5. File manager simulator**
+
+Build a dictionary that maps filenames to their sizes in bytes. Write functions to:
+- Add a file: `add_file(files, name, size)`
+- Delete a file: `delete_file(files, name)`
+- Show total used space
+- Find the largest file
+
+This models the file manager component of an OS.
+
+</Callout>
+
+## What comes next
+
+Today you learned how to:
+
+- Store key-value pairs in **dictionaries** and access, update, and loop through them.
+- Combine lists and dictionaries to model structured data like a **process table**.
+- Use **string methods** (`.split()`, `.join()`, `.strip()`, `.upper()`, `.lower()`, `.startswith()`, `.replace()`) to parse and format text.
+- Build a **round-robin process scheduler** that simulates the dispatcher, time slicing, and context switching from your OS lectures.
+
+You modelled an operating system concept in Python. The same ideas — dictionaries for structured data, string methods for parsing, and combining data structures — come up everywhere in programming. Keep practising.
+
+### Practice resources
+
+- [Google Colab](https://colab.research.google.com) — where you write and run code.
+- [Python Tutor](https://pythontutor.com) — see what your code does step by step.
+- [W3Schools Python](https://www.w3schools.com/python/) — short lessons on every Python topic.
